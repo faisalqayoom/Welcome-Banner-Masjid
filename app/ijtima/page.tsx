@@ -1,6 +1,8 @@
 import React from "react";
 import fs from "node:fs";
 import path from "node:path";
+import DisplayControls from "../components/DisplayControls";
+import FullscreenButton from "../components/FullscreenButton";
 import "./ijtima.css";
 
 /**
@@ -87,6 +89,10 @@ export default function IjtimaPage() {
 
   return (
     <main className="ij-frame">
+      <DisplayControls>
+        <FullscreenButton />
+      </DisplayControls>
+
       <div
         className="ij-stage"
         style={

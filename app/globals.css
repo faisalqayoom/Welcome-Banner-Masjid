@@ -813,7 +813,8 @@ html.ui-on body {
   cursor: default;
 }
 
-.theme-ui {
+/* fixed corner cluster shared by both displays */
+.display-ui {
   position: fixed;
   right: 2vmin;
   bottom: 2vmin;
@@ -825,11 +826,24 @@ html.ui-on body {
      so it stays readable no matter which banner theme is active */
   --ui-face: rgba(12, 14, 20, 0.72);
   --ui-line: rgba(255, 255, 255, 0.16);
+  opacity: 0.22;
+  transition: opacity 400ms ease;
+}
+.display-ui.is-active {
+  opacity: 1;
+}
+/* once the panel is actually running in kiosk mode, leave nothing on screen */
+html.is-kiosk .display-ui {
+  opacity: 0;
+  pointer-events: none;
+}
+html.is-kiosk .display-ui.is-active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* the always-present toggle — deliberately faint so it reads as a hint,
-   not as a control competing with the banner */
-.theme-toggle {
+/* round icon buttons */
+.ui-btn {
   width: 4vmin;
   height: 4vmin;
   flex: none;
@@ -843,24 +857,28 @@ html.ui-on body {
   border: 0.12vmin solid var(--ui-line);
   backdrop-filter: blur(1.2vmin);
   -webkit-backdrop-filter: blur(1.2vmin);
-  opacity: 0.22;
-  transition: opacity 220ms ease, transform 220ms ease;
+  transition: transform 200ms ease, background 200ms ease;
 }
-.theme-toggle svg {
+.ui-btn svg {
   width: 2.3vmin;
   height: 2.3vmin;
 }
-.theme-toggle:hover,
-.theme-toggle:focus-visible {
-  opacity: 1;
-  transform: scale(1.06);
+.ui-btn:hover,
+.ui-btn:focus-visible {
+  transform: scale(1.08);
+  background: rgba(24, 28, 38, 0.85);
   outline: none;
 }
-.theme-ui.is-open .theme-toggle {
-  opacity: 1;
+.ui-btn[aria-pressed="true"] {
+  color: #ffdf9e;
 }
 
-/* the swatch row, revealed by the toggle */
+.theme-ui {
+  display: flex;
+  align-items: center;
+  gap: 1vmin;
+}
+
 .theme-swatches {
   display: flex;
   align-items: center;
@@ -927,8 +945,9 @@ html.ui-on body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .display-ui,
   .theme-ui *,
-  .theme-toggle,
+  .ui-btn,
   .theme-dot {
     transition: none;
   }

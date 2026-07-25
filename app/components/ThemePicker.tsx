@@ -98,9 +98,7 @@ export default function ThemePicker() {
     };
   }, [apply, keepAwake, step]);
 
-  // Restore the cursor only while the control is in use.
   useEffect(() => {
-    document.documentElement.classList.toggle("ui-on", open);
     if (open) keepAwake();
   }, [open, keepAwake]);
 
@@ -129,7 +127,7 @@ export default function ThemePicker() {
 
       <button
         type="button"
-        className="theme-toggle"
+        className="ui-btn theme-toggle"
         onClick={() => setOpen((v) => !v)}
         title={open ? "Hide colour palette" : "Show colour palette"}
         aria-label={open ? "Hide colour palette" : "Show colour palette"}
