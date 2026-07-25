@@ -1,0 +1,530 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   BASE — lock the viewport, no scroll, no white space, kiosk-safe
+   ============================================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #050f1e;
+  color: #f7f1e1;
+  cursor: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Letterbox frame: centers the 16:9 stage, fills the rest with deep navy
+   so it blends on any non-16:9 panel (Android TV / kiosk / 1366x768). */
+.frame {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(120% 120% at 50% -10%, #0b2036 0%, #050f1e 55%, #03080f 100%);
+}
+
+/* The single 4K artwork.
+   --u = 1% of the stage WIDTH, --v = 1% of the stage HEIGHT.
+   Every size in this file is expressed in those two units, so the whole
+   composition scales in exact proportion from 3840x2160 down to 1366x768.
+   min()/vh math is used instead of container query units (cqw/cqh) so the
+   layout also holds on older Android TV / kiosk WebViews. */
+.stage {
+  --u: min(1vw, 1.7778vh);
+  --v: calc(var(--u) * 0.5625);
+
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh);
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(90% 70% at 50% 0%, rgba(28, 143, 116, 0.16) 0%, transparent 55%),
+    radial-gradient(120% 100% at 50% 120%, rgba(12, 74, 62, 0.35) 0%, transparent 60%),
+    linear-gradient(160deg, #0a1a2f 0%, #071426 45%, #050f1e 100%);
+}
+
+/* Outer luxury gold border of the whole banner */
+.stage-border {
+  position: absolute;
+  inset: calc(var(--u) * 1.1);
+  border: calc(var(--u) * 0.16) solid rgba(201, 162, 75, 0.55);
+  border-radius: calc(var(--u) * 0.9);
+  box-shadow:
+    0 0 calc(var(--u) * 3) rgba(201, 162, 75, 0.18) inset,
+    0 0 calc(var(--u) * 2) rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  z-index: 40;
+}
+.stage-border::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--u) * 0.35);
+  border: calc(var(--u) * 0.05) solid rgba(230, 200, 119, 0.35);
+  border-radius: calc(var(--u) * 0.6);
+}
+
+/* ============================================================
+   CONTENT LAYOUT — one screen, no scroll
+   ============================================================ */
+.content {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(var(--v) * 3.4) calc(var(--u) * 3.6) calc(var(--v) * 3.4);
+  gap: calc(var(--v) * 0.55);
+}
+
+/* ---- text primitives ---- */
+.arabic {
+  font-family: var(--font-amiri), serif;
+  direction: rtl;
+  line-height: 1.55;
+}
+.cinzel {
+  font-family: var(--font-cinzel), serif;
+  letter-spacing: 0.06em;
+}
+.poppins {
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.gold-text {
+  color: #e6c877;
+  background: linear-gradient(180deg, #f4e3a8 0%, #d9b45a 45%, #b8912f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 calc(var(--u) * 0.05) calc(var(--u) * 0.12) rgba(0, 0, 0, 0.45));
+}
+.ivory-text {
+  color: #f7f1e1;
+}
+
+/* ---- Bismillah ---- */
+.bismillah {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.2);
+}
+.bismillah .ar {
+  font-size: calc(var(--u) * 2.3);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.bismillah .en {
+  font-size: calc(var(--u) * 0.78);
+  letter-spacing: 0.22em;
+  line-height: 1.3;
+  color: rgba(233, 220, 194, 0.82);
+  text-transform: uppercase;
+}
+
+/* ---- Organization band ---- */
+.org {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 2.2);
+}
+.org-logo {
+  width: calc(var(--u) * 6.2);
+  height: calc(var(--u) * 6.2);
+  flex: none;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 calc(var(--u) * 0.2) calc(var(--u) * 0.6) rgba(0, 0, 0, 0.45));
+}
+.org-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(var(--v) * 0.2);
+}
+.org-titles .main {
+  font-size: calc(var(--u) * 4.4);
+  font-weight: 800;
+  line-height: 0.98;
+}
+.org-titles .sub {
+  font-size: calc(var(--u) * 1.5);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.4em;
+  color: rgba(233, 220, 194, 0.9);
+  /* letter-spacing leaves a trailing gap after the last glyph, which drags
+     centred text left by half of it — this padding cancels it out exactly. */
+  padding-left: 0.4em;
+}
+.org-rule {
+  width: calc(var(--u) * 22);
+  height: calc(var(--u) * 0.12);
+  margin: calc(var(--v) * 0.5) auto 0;
+  background: linear-gradient(90deg, transparent, #c9a24b, transparent);
+}
+
+/* ---- Main welcome ---- */
+.welcome {
+  text-align: center;
+}
+.welcome .ar {
+  font-size: calc(var(--u) * 4);
+  font-weight: 700;
+  /* Amiri sets tanween/shadda well above the ascender — a tight line box
+     clips them. 1.5 gives every harakah room to render in full. */
+  line-height: 1.5;
+  padding-top: calc(var(--v) * 0.4);
+  background: linear-gradient(180deg, #fbeeb8 0%, #e6c877 40%, #c9a24b 70%, #9c7a2a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 calc(var(--u) * 0.12) calc(var(--u) * 0.4) rgba(0, 0, 0, 0.5));
+}
+
+/* ============================================================
+   PANELS (Quran ayah + Hadith)
+   ============================================================ */
+.panels {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(var(--u) * 2);
+}
+.panel {
+  position: relative;
+  border-radius: calc(var(--u) * 0.7);
+  padding: calc(var(--v) * 1.3) calc(var(--u) * 1.8);
+  background:
+    linear-gradient(160deg, rgba(18, 43, 74, 0.72) 0%, rgba(7, 20, 38, 0.72) 100%);
+  border: calc(var(--u) * 0.1) solid rgba(201, 162, 75, 0.45);
+  box-shadow:
+    0 0 calc(var(--u) * 2) rgba(0, 0, 0, 0.35),
+    0 0 calc(var(--u) * 1.2) rgba(201, 162, 75, 0.08) inset;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--v) * 0.5);
+}
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--u) * 0.45);
+  border: calc(var(--u) * 0.045) solid rgba(230, 200, 119, 0.28);
+  border-radius: calc(var(--u) * 0.45);
+  pointer-events: none;
+}
+
+/* corner flourishes */
+.panel .corner {
+  position: absolute;
+  width: calc(var(--u) * 1.4);
+  height: calc(var(--u) * 1.4);
+  border: calc(var(--u) * 0.09) solid rgba(230, 200, 119, 0.6);
+}
+.panel .corner.tl { top: calc(var(--u) * 0.7); left: calc(var(--u) * 0.7); border-right: none; border-bottom: none; }
+.panel .corner.tr { top: calc(var(--u) * 0.7); right: calc(var(--u) * 0.7); border-left: none; border-bottom: none; }
+.panel .corner.bl { bottom: calc(var(--u) * 0.7); left: calc(var(--u) * 0.7); border-right: none; border-top: none; }
+.panel .corner.br { bottom: calc(var(--u) * 0.7); right: calc(var(--u) * 0.7); border-left: none; border-top: none; }
+
+/* gold ribbon */
+.ribbon {
+  position: relative;
+  display: inline-block;
+  padding: calc(var(--v) * 0.45) calc(var(--u) * 1.8);
+  font-family: var(--font-amiri), serif;
+  font-size: calc(var(--u) * 1.3);
+  font-weight: 700;
+  line-height: 1.5;
+  color: #1a1206;
+  background: linear-gradient(180deg, #f0d488 0%, #d9b45a 45%, #b8912f 100%);
+  border-radius: calc(var(--u) * 0.35);
+  box-shadow: 0 calc(var(--u) * 0.15) calc(var(--u) * 0.5) rgba(0, 0, 0, 0.4);
+  margin-bottom: calc(var(--v) * 0.25);
+}
+.ribbon::before,
+.ribbon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: calc(var(--u) * 1.2);
+  height: calc(var(--u) * 0.09);
+  background: linear-gradient(90deg, transparent, #c9a24b);
+  transform: translateY(-50%);
+}
+.ribbon::before { right: 100%; margin-right: calc(var(--u) * 0.5); }
+.ribbon::after { left: 100%; margin-left: calc(var(--u) * 0.5); transform: translateY(-50%) scaleX(-1); }
+
+.panel .ayah {
+  font-size: calc(var(--u) * 1.75);
+  font-weight: 700;
+  line-height: 1.45;
+  color: #f7f1e1;
+}
+.panel .trans {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: calc(var(--u) * 0.86);
+  font-weight: 300;
+  line-height: 1.35;
+  color: rgba(233, 220, 194, 0.9);
+  max-width: 92%;
+}
+.panel .ref {
+  font-family: var(--font-cinzel), serif;
+  font-size: calc(var(--u) * 0.8);
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  color: #e6c877;
+}
+
+/* ============================================================
+   RIBBON STRIPS (center + dawah)
+   ============================================================ */
+.strip {
+  width: 76%;
+  text-align: center;
+  padding: calc(var(--v) * 0.9) calc(var(--u) * 2);
+  border-radius: calc(var(--u) * 0.5);
+  background:
+    linear-gradient(180deg, rgba(27, 58, 92, 0.9) 0%, rgba(10, 26, 47, 0.92) 100%);
+  border: calc(var(--u) * 0.08) solid rgba(201, 162, 75, 0.5);
+  box-shadow: 0 0 calc(var(--u) * 1.4) rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.2);
+}
+.strip .ar {
+  font-family: var(--font-amiri), serif;
+  font-size: calc(var(--u) * 1.6);
+  font-weight: 700;
+  /* room for the shadda/damma above the letters — 1.3 clipped them */
+  line-height: 1.55;
+}
+.strip .en {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: calc(var(--u) * 0.92);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  color: rgba(233, 220, 194, 0.9);
+  text-transform: uppercase;
+}
+.strip .en.small {
+  font-size: calc(var(--u) * 0.68);
+  letter-spacing: 0.2em;
+  color: rgba(233, 220, 194, 0.7);
+}
+
+/* ============================================================
+   VENUE
+   ============================================================ */
+.venue {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.15);
+}
+.venue .label {
+  font-family: var(--font-cinzel), serif;
+  font-size: calc(var(--u) * 0.82);
+  line-height: 1.2;
+  letter-spacing: 0.5em;
+  color: #e6c877;
+  padding: calc(var(--v) * 0.2) calc(var(--u) * 1.2) calc(var(--v) * 0.2) calc(var(--u) * 1.5);
+  border: calc(var(--u) * 0.06) solid rgba(201, 162, 75, 0.5);
+  border-radius: calc(var(--u) * 0.3);
+  margin-bottom: calc(var(--v) * 0.2);
+}
+.venue .name {
+  font-family: var(--font-cinzel), serif;
+  font-size: calc(var(--u) * 2.85);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.venue .ar {
+  font-family: var(--font-amiri), serif;
+  font-size: calc(var(--u) * 1.3);
+  line-height: 1.5;
+  color: rgba(247, 241, 225, 0.92);
+}
+.venue .org-line {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: calc(var(--u) * 0.85);
+  line-height: 1.3;
+  letter-spacing: 0.18em;
+  color: rgba(233, 220, 194, 0.75);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   BOTTOM ICONS
+   ============================================================ */
+.icons {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  margin-top: auto;
+  padding-top: calc(var(--v) * 0.5);
+}
+.icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.3);
+}
+.icon-item svg {
+  width: calc(var(--u) * 2.5);
+  height: calc(var(--u) * 2.5);
+  stroke: #e6c877;
+  stroke-width: 1.6;
+  fill: none;
+  filter: drop-shadow(0 0 calc(var(--u) * 0.4) rgba(230, 200, 119, 0.35));
+}
+.icon-item .lbl {
+  font-family: var(--font-cinzel), serif;
+  font-size: calc(var(--u) * 0.75);
+  line-height: 1.3;
+  letter-spacing: 0.16em;
+  color: rgba(233, 220, 194, 0.9);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.icon-sep {
+  width: calc(var(--u) * 0.09);
+  height: calc(var(--u) * 2.4);
+  align-self: center;
+  background: linear-gradient(180deg, transparent, rgba(201, 162, 75, 0.5), transparent);
+}
+
+/* ============================================================
+   DECORATIONS (background layers) + ANIMATIONS
+   ============================================================ */
+.deco {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+.deco svg { display: block; }
+
+/* very light rays from above */
+.rays {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--u) * 70);
+  height: calc(var(--u) * 70);
+  background:
+    conic-gradient(
+      from 180deg at 50% 0%,
+      transparent 0deg,
+      rgba(230, 200, 119, 0.06) 6deg,
+      transparent 12deg,
+      transparent 20deg,
+      rgba(230, 200, 119, 0.05) 26deg,
+      transparent 32deg,
+      transparent 45deg,
+      rgba(255, 255, 255, 0.04) 50deg,
+      transparent 56deg
+    );
+  mix-blend-mode: screen;
+  animation: rays 34s ease-in-out infinite alternate;
+  will-change: opacity, transform;
+}
+@keyframes rays {
+  0%   { opacity: 0.55; transform: translateX(-50%) rotate(-2deg); }
+  100% { opacity: 1;    transform: translateX(-50%) rotate(2deg); }
+}
+
+/* central soft glow */
+.glow {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(28, 143, 116, 0.22) 0%, transparent 62%);
+  filter: blur(calc(var(--u) * 0.6));
+  animation: glow 22s ease-in-out infinite;
+  will-change: opacity;
+}
+@keyframes glow {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* hanging lanterns — start just inside the gold border, never clipped */
+.lantern {
+  position: absolute;
+  top: calc(var(--u) * 1.6);
+  transform-origin: top center;
+  will-change: transform;
+}
+.lantern.l1 { left: 4.5%;  animation: sway 28s ease-in-out infinite; }
+.lantern.l2 { left: 15%;   animation: sway 34s ease-in-out infinite reverse; }
+.lantern.l3 { right: 4.5%; animation: sway 30s ease-in-out infinite; }
+.lantern.l4 { right: 15%;  animation: sway 38s ease-in-out infinite reverse; }
+@keyframes sway {
+  0%, 100% { transform: rotate(-2.2deg); }
+  50%      { transform: rotate(2.2deg); }
+}
+
+/* floating particles */
+.particles span {
+  position: absolute;
+  bottom: calc(var(--u) * -2);
+  border-radius: 50%;
+  background: rgba(230, 200, 119, 0.7);
+  box-shadow: 0 0 calc(var(--u) * 0.6) rgba(230, 200, 119, 0.6);
+  animation: rise linear infinite;
+  will-change: transform, opacity;
+}
+@keyframes rise {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  10%  { opacity: 0.9; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(calc(var(--v) * -64)) scale(0.4); opacity: 0; }
+}
+
+/* arches / silhouettes tuning */
+.arch-line { stroke: rgba(201, 162, 75, 0.4); }
+.mosque-sil { fill: rgba(5, 15, 30, 0.55); }
+.pattern-tile { stroke: rgba(201, 162, 75, 0.12); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rays, .glow, .lantern, .particles span { animation: none !important; }
+}
