@@ -1,11 +1,13 @@
 import React from "react";
 import Decorations from "./components/Decorations";
 import Logo from "./components/Logo";
+import ThemePicker from "./components/ThemePicker";
 import { ICONS } from "./components/Icons";
 
 export default function Page() {
   return (
     <main className="frame">
+      <ThemePicker />
       <div className="stage">
         <Decorations />
         <div className="stage-border" />

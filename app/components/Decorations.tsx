@@ -9,25 +9,25 @@ function Lantern({ className, scale = 1 }: { className: string; scale?: number }
       <svg viewBox="0 0 60 150" style={{ width: "100%", height: "auto" }}>
         <defs>
           <linearGradient id="lanGlow" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f6e6a6" />
-            <stop offset="60%" stopColor="#d9b45a" />
-            <stop offset="100%" stopColor="#a67c2e" />
+            <stop offset="0%" stopColor="var(--accent-bright)" />
+            <stop offset="60%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--accent-deep)" />
           </linearGradient>
         </defs>
-        <line x1="30" y1="0" x2="30" y2="34" stroke="#c9a24b" strokeWidth="1.4" />
-        <circle cx="30" cy="36" r="3" fill="#e6c877" />
-        <path d="M20 40h20l4 8H16z" fill="none" stroke="#c9a24b" strokeWidth="1.6" />
+        <line x1="30" y1="0" x2="30" y2="34" stroke="var(--accent)" strokeWidth="1.4" />
+        <circle cx="30" cy="36" r="3" fill="var(--accent-bright)" />
+        <path d="M20 40h20l4 8H16z" fill="none" stroke="var(--accent)" strokeWidth="1.6" />
         {/* body */}
         <path
           d="M18 48c-6 10-6 40 0 52 4 8 20 8 24 0 6-12 6-42 0-52z"
-          fill="rgba(230,200,119,0.16)"
-          stroke="#c9a24b"
+          fill="var(--border-glow)"
+          stroke="var(--accent)"
           strokeWidth="1.6"
         />
         <ellipse cx="30" cy="76" rx="9" ry="14" fill="url(#lanGlow)" opacity="0.85" />
-        <path d="M18 60h24M18 92h24" stroke="#c9a24b" strokeWidth="1.2" opacity="0.6" />
-        <path d="M22 100h16l-3 10H25z" fill="none" stroke="#c9a24b" strokeWidth="1.6" />
-        <circle cx="30" cy="116" r="3" fill="#e6c877" />
+        <path d="M18 60h24M18 92h24" stroke="var(--accent)" strokeWidth="1.2" opacity="0.6" />
+        <path d="M22 100h16l-3 10H25z" fill="none" stroke="var(--accent)" strokeWidth="1.6" />
+        <circle cx="30" cy="116" r="3" fill="var(--accent-bright)" />
       </svg>
     </div>
   );

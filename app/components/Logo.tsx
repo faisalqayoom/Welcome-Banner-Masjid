@@ -7,14 +7,14 @@ export default function Logo() {
     <svg viewBox="0 0 200 200" role="img" aria-label="Organisation emblem">
       <defs>
         <radialGradient id="medal" cx="50%" cy="38%" r="70%">
-          <stop offset="0%" stopColor="#14324f" />
-          <stop offset="70%" stopColor="#0a1a2f" />
-          <stop offset="100%" stopColor="#050f1e" />
+          <stop offset="0%" stopColor="var(--logo-face-a)" />
+          <stop offset="70%" stopColor="var(--logo-face-b)" />
+          <stop offset="100%" stopColor="var(--logo-face-c)" />
         </radialGradient>
         <linearGradient id="goldStroke" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f4e3a8" />
-          <stop offset="50%" stopColor="#d9b45a" />
-          <stop offset="100%" stopColor="#b8912f" />
+          <stop offset="0%" stopColor="var(--accent-bright)" />
+          <stop offset="50%" stopColor="var(--accent)" />
+          <stop offset="100%" stopColor="var(--accent-deep)" />
         </linearGradient>
       </defs>
 

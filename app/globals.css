@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./themes.css";
+
 /* ============================================================
    BASE — lock the viewport, no scroll, no white space, kiosk-safe
    ============================================================ */
@@ -17,8 +19,8 @@ body {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-  background: #050f1e;
-  color: #f7f1e1;
+  background: var(--page-bg);
+  color: var(--ink);
   cursor: none;
   user-select: none;
   -webkit-user-select: none;
@@ -36,8 +38,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(120% 120% at 50% -10%, #0b2036 0%, #050f1e 55%, #03080f 100%);
+  background: var(--frame-bg);
 }
 
 /* The single 4K artwork.
@@ -57,20 +58,20 @@ body {
   overflow: hidden;
   isolation: isolate;
   background:
-    radial-gradient(90% 70% at 50% 0%, rgba(28, 143, 116, 0.16) 0%, transparent 55%),
-    radial-gradient(120% 100% at 50% 120%, rgba(12, 74, 62, 0.35) 0%, transparent 60%),
-    linear-gradient(160deg, #0a1a2f 0%, #071426 45%, #050f1e 100%);
+    radial-gradient(90% 70% at 50% 0%, var(--stage-tint-1) 0%, transparent 55%),
+    radial-gradient(120% 100% at 50% 120%, var(--stage-tint-2) 0%, transparent 60%),
+    var(--stage-base);
 }
 
 /* Outer luxury gold border of the whole banner */
 .stage-border {
   position: absolute;
   inset: calc(var(--u) * 1.1);
-  border: calc(var(--u) * 0.16) solid rgba(201, 162, 75, 0.55);
+  border: calc(var(--u) * 0.16) solid var(--border-outer);
   border-radius: calc(var(--u) * 0.9);
   box-shadow:
-    0 0 calc(var(--u) * 3) rgba(201, 162, 75, 0.18) inset,
-    0 0 calc(var(--u) * 2) rgba(0, 0, 0, 0.5);
+    0 0 calc(var(--u) * 3) var(--border-glow) inset,
+    0 0 calc(var(--u) * 2) var(--shadow-strong);
   pointer-events: none;
   z-index: 40;
 }
@@ -78,7 +79,7 @@ body {
   content: "";
   position: absolute;
   inset: calc(var(--u) * 0.35);
-  border: calc(var(--u) * 0.05) solid rgba(230, 200, 119, 0.35);
+  border: calc(var(--u) * 0.05) solid var(--border-inner);
   border-radius: calc(var(--u) * 0.6);
 }
 
@@ -112,15 +113,15 @@ body {
 }
 
 .gold-text {
-  color: #e6c877;
-  background: linear-gradient(180deg, #f4e3a8 0%, #d9b45a 45%, #b8912f 100%);
+  color: var(--accent-bright);
+  background: var(--grad-gold);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 calc(var(--u) * 0.05) calc(var(--u) * 0.12) rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 calc(var(--u) * 0.05) calc(var(--u) * 0.12) var(--shadow));
 }
 .ivory-text {
-  color: #f7f1e1;
+  color: var(--ink);
 }
 
 /* ---- Bismillah ---- */
@@ -140,7 +141,7 @@ body {
   font-size: calc(var(--u) * 0.78);
   letter-spacing: 0.22em;
   line-height: 1.3;
-  color: rgba(233, 220, 194, 0.82);
+  color: var(--ink-faint);
   text-transform: uppercase;
 }
 
@@ -158,7 +159,7 @@ body {
   flex: none;
   display: grid;
   place-items: center;
-  filter: drop-shadow(0 calc(var(--u) * 0.2) calc(var(--u) * 0.6) rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 calc(var(--u) * 0.2) calc(var(--u) * 0.6) var(--shadow));
 }
 .org-titles {
   display: flex;
@@ -177,7 +178,7 @@ body {
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.4em;
-  color: rgba(233, 220, 194, 0.9);
+  color: var(--ink-soft);
   /* letter-spacing leaves a trailing gap after the last glyph, which drags
      centred text left by half of it — this padding cancels it out exactly. */
   padding-left: 0.4em;
@@ -186,7 +187,7 @@ body {
   width: calc(var(--u) * 22);
   height: calc(var(--u) * 0.12);
   margin: calc(var(--v) * 0.5) auto 0;
-  background: linear-gradient(90deg, transparent, #c9a24b, transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 
 /* ---- Main welcome ---- */
@@ -200,11 +201,11 @@ body {
      clips them. 1.5 gives every harakah room to render in full. */
   line-height: 1.5;
   padding-top: calc(var(--v) * 0.4);
-  background: linear-gradient(180deg, #fbeeb8 0%, #e6c877 40%, #c9a24b 70%, #9c7a2a 100%);
+  background: var(--grad-hero);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 calc(var(--u) * 0.12) calc(var(--u) * 0.4) rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 calc(var(--u) * 0.12) calc(var(--u) * 0.4) var(--shadow-strong));
 }
 
 /* ============================================================
@@ -220,12 +221,11 @@ body {
   position: relative;
   border-radius: calc(var(--u) * 0.7);
   padding: calc(var(--v) * 1.3) calc(var(--u) * 1.8);
-  background:
-    linear-gradient(160deg, rgba(18, 43, 74, 0.72) 0%, rgba(7, 20, 38, 0.72) 100%);
-  border: calc(var(--u) * 0.1) solid rgba(201, 162, 75, 0.45);
+  background: var(--panel);
+  border: calc(var(--u) * 0.1) solid var(--panel-border);
   box-shadow:
-    0 0 calc(var(--u) * 2) rgba(0, 0, 0, 0.35),
-    0 0 calc(var(--u) * 1.2) rgba(201, 162, 75, 0.08) inset;
+    0 0 calc(var(--u) * 2) var(--shadow),
+    0 0 calc(var(--u) * 1.2) var(--border-glow) inset;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -237,7 +237,7 @@ body {
   content: "";
   position: absolute;
   inset: calc(var(--u) * 0.45);
-  border: calc(var(--u) * 0.045) solid rgba(230, 200, 119, 0.28);
+  border: calc(var(--u) * 0.045) solid var(--panel-hair);
   border-radius: calc(var(--u) * 0.45);
   pointer-events: none;
 }
@@ -247,7 +247,7 @@ body {
   position: absolute;
   width: calc(var(--u) * 1.4);
   height: calc(var(--u) * 1.4);
-  border: calc(var(--u) * 0.09) solid rgba(230, 200, 119, 0.6);
+  border: calc(var(--u) * 0.09) solid var(--corner);
 }
 .panel .corner.tl { top: calc(var(--u) * 0.7); left: calc(var(--u) * 0.7); border-right: none; border-bottom: none; }
 .panel .corner.tr { top: calc(var(--u) * 0.7); right: calc(var(--u) * 0.7); border-left: none; border-bottom: none; }
@@ -263,10 +263,10 @@ body {
   font-size: calc(var(--u) * 1.3);
   font-weight: 700;
   line-height: 1.5;
-  color: #1a1206;
-  background: linear-gradient(180deg, #f0d488 0%, #d9b45a 45%, #b8912f 100%);
+  color: var(--ribbon-ink);
+  background: var(--grad-ribbon);
   border-radius: calc(var(--u) * 0.35);
-  box-shadow: 0 calc(var(--u) * 0.15) calc(var(--u) * 0.5) rgba(0, 0, 0, 0.4);
+  box-shadow: 0 calc(var(--u) * 0.15) calc(var(--u) * 0.5) var(--shadow);
   margin-bottom: calc(var(--v) * 0.25);
 }
 .ribbon::before,
@@ -276,7 +276,7 @@ body {
   top: 50%;
   width: calc(var(--u) * 1.2);
   height: calc(var(--u) * 0.09);
-  background: linear-gradient(90deg, transparent, #c9a24b);
+  background: linear-gradient(90deg, transparent, var(--accent));
   transform: translateY(-50%);
 }
 .ribbon::before { right: 100%; margin-right: calc(var(--u) * 0.5); }
@@ -286,14 +286,14 @@ body {
   font-size: calc(var(--u) * 1.75);
   font-weight: 700;
   line-height: 1.45;
-  color: #f7f1e1;
+  color: var(--ink);
 }
 .panel .trans {
   font-family: var(--font-poppins), sans-serif;
   font-size: calc(var(--u) * 0.86);
   font-weight: 300;
   line-height: 1.35;
-  color: rgba(233, 220, 194, 0.9);
+  color: var(--ink-soft);
   max-width: 92%;
 }
 .panel .ref {
@@ -301,7 +301,7 @@ body {
   font-size: calc(var(--u) * 0.8);
   line-height: 1.3;
   letter-spacing: 0.14em;
-  color: #e6c877;
+  color: var(--accent-bright);
 }
 
 /* ============================================================
@@ -312,10 +312,9 @@ body {
   text-align: center;
   padding: calc(var(--v) * 0.9) calc(var(--u) * 2);
   border-radius: calc(var(--u) * 0.5);
-  background:
-    linear-gradient(180deg, rgba(27, 58, 92, 0.9) 0%, rgba(10, 26, 47, 0.92) 100%);
-  border: calc(var(--u) * 0.08) solid rgba(201, 162, 75, 0.5);
-  box-shadow: 0 0 calc(var(--u) * 1.4) rgba(0, 0, 0, 0.35);
+  background: var(--strip);
+  border: calc(var(--u) * 0.08) solid var(--strip-border);
+  box-shadow: 0 0 calc(var(--u) * 1.4) var(--shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -334,13 +333,13 @@ body {
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: 0.14em;
-  color: rgba(233, 220, 194, 0.9);
+  color: var(--ink-soft);
   text-transform: uppercase;
 }
 .strip .en.small {
   font-size: calc(var(--u) * 0.68);
   letter-spacing: 0.2em;
-  color: rgba(233, 220, 194, 0.7);
+  color: var(--ink-dim);
 }
 
 /* ============================================================
@@ -358,9 +357,9 @@ body {
   font-size: calc(var(--u) * 0.82);
   line-height: 1.2;
   letter-spacing: 0.5em;
-  color: #e6c877;
+  color: var(--accent-bright);
   padding: calc(var(--v) * 0.2) calc(var(--u) * 1.2) calc(var(--v) * 0.2) calc(var(--u) * 1.5);
-  border: calc(var(--u) * 0.06) solid rgba(201, 162, 75, 0.5);
+  border: calc(var(--u) * 0.06) solid var(--strip-border);
   border-radius: calc(var(--u) * 0.3);
   margin-bottom: calc(var(--v) * 0.2);
 }
@@ -374,14 +373,14 @@ body {
   font-family: var(--font-amiri), serif;
   font-size: calc(var(--u) * 1.3);
   line-height: 1.5;
-  color: rgba(247, 241, 225, 0.92);
+  color: var(--ink);
 }
 .venue .org-line {
   font-family: var(--font-poppins), sans-serif;
   font-size: calc(var(--u) * 0.85);
   line-height: 1.3;
   letter-spacing: 0.18em;
-  color: rgba(233, 220, 194, 0.75);
+  color: var(--ink-dim);
   text-transform: uppercase;
 }
 
@@ -406,17 +405,17 @@ body {
 .icon-item svg {
   width: calc(var(--u) * 2.5);
   height: calc(var(--u) * 2.5);
-  stroke: #e6c877;
+  stroke: var(--accent-bright);
   stroke-width: 1.6;
   fill: none;
-  filter: drop-shadow(0 0 calc(var(--u) * 0.4) rgba(230, 200, 119, 0.35));
+  filter: drop-shadow(0 0 calc(var(--u) * 0.4) var(--border-glow));
 }
 .icon-item .lbl {
   font-family: var(--font-cinzel), serif;
   font-size: calc(var(--u) * 0.75);
   line-height: 1.3;
   letter-spacing: 0.16em;
-  color: rgba(233, 220, 194, 0.9);
+  color: var(--ink-soft);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -424,7 +423,7 @@ body {
   width: calc(var(--u) * 0.09);
   height: calc(var(--u) * 2.4);
   align-self: center;
-  background: linear-gradient(180deg, transparent, rgba(201, 162, 75, 0.5), transparent);
+  background: linear-gradient(180deg, transparent, var(--strip-border), transparent);
 }
 
 /* ============================================================
@@ -451,16 +450,16 @@ body {
     conic-gradient(
       from 180deg at 50% 0%,
       transparent 0deg,
-      rgba(230, 200, 119, 0.06) 6deg,
+      var(--ray-1) 6deg,
       transparent 12deg,
       transparent 20deg,
-      rgba(230, 200, 119, 0.05) 26deg,
+      var(--ray-2) 26deg,
       transparent 32deg,
       transparent 45deg,
-      rgba(255, 255, 255, 0.04) 50deg,
+      var(--ray-3) 50deg,
       transparent 56deg
     );
-  mix-blend-mode: screen;
+  mix-blend-mode: var(--ray-blend);
   animation: rays 34s ease-in-out infinite alternate;
   will-change: opacity, transform;
 }
@@ -477,7 +476,7 @@ body {
   width: calc(var(--u) * 46);
   height: calc(var(--u) * 46);
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(28, 143, 116, 0.22) 0%, transparent 62%);
+  background: radial-gradient(circle, var(--glow) 0%, transparent 62%);
   filter: blur(calc(var(--u) * 0.6));
   animation: glow 22s ease-in-out infinite;
   will-change: opacity;
@@ -508,8 +507,8 @@ body {
   position: absolute;
   bottom: calc(var(--u) * -2);
   border-radius: 50%;
-  background: rgba(230, 200, 119, 0.7);
-  box-shadow: 0 0 calc(var(--u) * 0.6) rgba(230, 200, 119, 0.6);
+  background: var(--particle);
+  box-shadow: 0 0 calc(var(--u) * 0.6) var(--particle);
   animation: rise linear infinite;
   will-change: transform, opacity;
 }
@@ -521,10 +520,98 @@ body {
 }
 
 /* arches / silhouettes tuning */
-.arch-line { stroke: rgba(201, 162, 75, 0.4); }
-.mosque-sil { fill: rgba(5, 15, 30, 0.55); }
-.pattern-tile { stroke: rgba(201, 162, 75, 0.12); }
+.arch-line { stroke: var(--deco-stroke); }
+.mosque-sil { fill: var(--sil); }
+.pattern-tile { stroke: var(--pattern); }
 
 @media (prefers-reduced-motion: reduce) {
   .rays, .glow, .lantern, .particles span { animation: none !important; }
+}
+
+/* ============================================================
+   THEME PICKER — invisible until someone moves a mouse or presses a key,
+   then fades itself back out. Never part of the banner artwork.
+   Sized in vmin (not --u) so it stays a usable target at 4K.
+   ============================================================ */
+html.ui-on,
+html.ui-on body {
+  cursor: default;
+}
+
+.theme-ui {
+  position: fixed;
+  left: 50%;
+  bottom: 2.2vmin;
+  transform: translate(-50%, 1.4vmin);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 1.1vmin;
+  padding: 1.1vmin 1.7vmin;
+  border-radius: 999px;
+  background: rgba(12, 14, 20, 0.72);
+  border: 0.12vmin solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0.6vmin 2.4vmin rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(1.2vmin);
+  -webkit-backdrop-filter: blur(1.2vmin);
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 260ms ease, transform 260ms ease, visibility 0s linear 260ms;
+}
+.theme-ui.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+  visibility: visible;
+  transition: opacity 200ms ease, transform 200ms ease, visibility 0s;
+}
+
+.theme-ui-label,
+.theme-ui-hint {
+  font-family: var(--font-poppins), sans-serif;
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+  /* fixed, theme-independent colours: this chrome sits on its own dark pill
+     so it stays readable no matter which banner theme is active */
+}
+.theme-ui-label {
+  font-size: 1.35vmin;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.theme-ui-hint {
+  font-size: 1.15vmin;
+  color: rgba(255, 255, 255, 0.42);
+  padding-left: 0.4vmin;
+}
+
+.theme-dot {
+  width: 2.6vmin;
+  height: 2.6vmin;
+  border-radius: 50%;
+  border: 0.22vmin solid rgba(255, 255, 255, 0.34);
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+.theme-dot:hover {
+  transform: scale(1.16);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+.theme-dot:focus-visible {
+  box-shadow: 0 0 0 0.4vmin rgba(255, 255, 255, 0.35);
+}
+.theme-dot.is-active {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 0.35vmin rgba(255, 255, 255, 0.28);
+  transform: scale(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-ui,
+  .theme-dot {
+    transition: none;
+  }
 }

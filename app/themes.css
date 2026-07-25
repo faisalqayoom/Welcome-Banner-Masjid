@@ -1,0 +1,259 @@
+/* ============================================================
+   THEME TOKENS
+   Every colour in the banner resolves to one of these variables, so a
+   theme swap moves the background AND everything drawn on top of it —
+   text, gradients, panel fills, borders, silhouettes, particles.
+
+   Contrast rule for each theme: --ink / --ink-soft / --ink-dim and the
+   --grad-* text gradients are chosen against --stage-base and --panel so
+   every string stays legible from across the hall. Verified with
+   scripts/check-contrast.mjs (WCAG relative luminance).
+   ============================================================ */
+
+/* ---------- 1. ROYAL NAVY (default) ---------- */
+:root,
+[data-theme="navy"] {
+  --page-bg: #050f1e;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #0b2036 0%, #050f1e 55%, #03080f 100%);
+  --stage-base: linear-gradient(160deg, #0a1a2f 0%, #071426 45%, #050f1e 100%);
+  --stage-tint-1: rgba(28, 143, 116, 0.16);
+  --stage-tint-2: rgba(12, 74, 62, 0.35);
+
+  --ink: #f7f1e1;
+  --ink-soft: rgba(233, 220, 194, 0.9);
+  --ink-dim: rgba(233, 220, 194, 0.75);
+  --ink-faint: rgba(233, 220, 194, 0.82);
+
+  --accent: #c9a24b;
+  --accent-bright: #e6c877;
+  --accent-deep: #a67c2e;
+
+  --grad-gold: linear-gradient(180deg, #f9edc0 0%, #ecd18b 45%, #d8b25c 100%);
+  --grad-hero: linear-gradient(180deg, #fef6d6 0%, #f5e3a6 40%, #e8c877 70%, #d5ae55 100%);
+  --grad-ribbon: linear-gradient(180deg, #f0d488 0%, #d9b45a 45%, #b8912f 100%);
+  --ribbon-ink: #1a1206;
+
+  --panel: linear-gradient(160deg, rgba(18, 43, 74, 0.72) 0%, rgba(7, 20, 38, 0.72) 100%);
+  --panel-border: rgba(201, 162, 75, 0.45);
+  --panel-hair: rgba(230, 200, 119, 0.28);
+  --corner: rgba(230, 200, 119, 0.6);
+
+  --strip: linear-gradient(180deg, rgba(27, 58, 92, 0.9) 0%, rgba(10, 26, 47, 0.92) 100%);
+  --strip-border: rgba(201, 162, 75, 0.5);
+
+  --border-outer: rgba(201, 162, 75, 0.55);
+  --border-inner: rgba(230, 200, 119, 0.35);
+  --border-glow: rgba(201, 162, 75, 0.18);
+
+  --deco-stroke: rgba(201, 162, 75, 0.4);
+  --pattern: rgba(201, 162, 75, 0.12);
+  --sil: rgba(5, 15, 30, 0.55);
+  --particle: rgba(230, 200, 119, 0.7);
+  --glow: rgba(28, 143, 116, 0.22);
+  --ray-1: rgba(230, 200, 119, 0.06);
+  --ray-2: rgba(230, 200, 119, 0.05);
+  --ray-3: rgba(255, 255, 255, 0.04);
+  --ray-blend: screen;
+
+  --shadow: rgba(0, 0, 0, 0.45);
+  --shadow-strong: rgba(0, 0, 0, 0.5);
+
+  --logo-face-a: #14324f;
+  --logo-face-b: #0a1a2f;
+  --logo-face-c: #050f1e;
+}
+
+/* ---------- 2. EMERALD ---------- */
+[data-theme="emerald"] {
+  --page-bg: #03120f;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #08301f 0%, #03120f 55%, #020c0a 100%);
+  --stage-base: linear-gradient(160deg, #06251d 0%, #041b16 45%, #03120f 100%);
+  --stage-tint-1: rgba(201, 162, 75, 0.12);
+  --stage-tint-2: rgba(6, 60, 44, 0.4);
+
+  --panel: linear-gradient(160deg, rgba(7, 45, 35, 0.78) 0%, rgba(2, 19, 15, 0.82) 100%);
+  --strip: linear-gradient(180deg, rgba(8, 52, 40, 0.93) 0%, rgba(3, 22, 17, 0.94) 100%);
+  --sil: rgba(2, 18, 14, 0.55);
+  --glow: rgba(201, 162, 75, 0.16);
+  --logo-face-a: #0d4535;
+  --logo-face-b: #06251d;
+  --logo-face-c: #03120f;
+}
+
+/* ---------- 3. MAROON ---------- */
+[data-theme="maroon"] {
+  --page-bg: #1c060c;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #45141f 0%, #1c060c 55%, #120408 100%);
+  --stage-base: linear-gradient(160deg, #3a0f18 0%, #2a0a12 45%, #1c060c 100%);
+  --stage-tint-1: rgba(201, 162, 75, 0.12);
+  --stage-tint-2: rgba(88, 22, 36, 0.38);
+
+  --panel: linear-gradient(160deg, rgba(66, 18, 29, 0.78) 0%, rgba(28, 7, 12, 0.82) 100%);
+  --strip: linear-gradient(180deg, rgba(78, 22, 34, 0.93) 0%, rgba(34, 9, 15, 0.94) 100%);
+  --sil: rgba(20, 4, 9, 0.55);
+  --glow: rgba(201, 162, 75, 0.16);
+  --logo-face-a: #55192a;
+  --logo-face-b: #3a0f18;
+  --logo-face-c: #1c060c;
+}
+
+/* ---------- 4. ROYAL PURPLE ---------- */
+[data-theme="royal"] {
+  --page-bg: #100620;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #2c1450 0%, #100620 55%, #0a0417 100%);
+  --stage-base: linear-gradient(160deg, #23103f 0%, #190b2d 45%, #100620 100%);
+  --stage-tint-1: rgba(201, 162, 75, 0.12);
+  --stage-tint-2: rgba(58, 26, 96, 0.4);
+
+  --panel: linear-gradient(160deg, rgba(46, 23, 76, 0.78) 0%, rgba(19, 8, 35, 0.82) 100%);
+  --strip: linear-gradient(180deg, rgba(56, 29, 90, 0.93) 0%, rgba(23, 10, 41, 0.94) 100%);
+  --sil: rgba(11, 4, 24, 0.55);
+  --glow: rgba(201, 162, 75, 0.16);
+  --logo-face-a: #341a56;
+  --logo-face-b: #23103f;
+  --logo-face-c: #100620;
+}
+
+/* ---------- 5. AZURE BLUE ---------- */
+[data-theme="azure"] {
+  --page-bg: #04102a;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #0d2c63 0%, #04102a 55%, #020a1c 100%);
+  --stage-base: linear-gradient(160deg, #0a2352 0%, #07193c 45%, #04102a 100%);
+  --stage-tint-1: rgba(201, 162, 75, 0.12);
+  --stage-tint-2: rgba(11, 40, 96, 0.4);
+
+  --panel: linear-gradient(160deg, rgba(14, 44, 100, 0.78) 0%, rgba(4, 16, 42, 0.82) 100%);
+  --strip: linear-gradient(180deg, rgba(16, 50, 112, 0.93) 0%, rgba(5, 19, 48, 0.94) 100%);
+  --sil: rgba(3, 12, 32, 0.55);
+  --glow: rgba(201, 162, 75, 0.16);
+  --logo-face-a: #123563;
+  --logo-face-b: #0a2352;
+  --logo-face-c: #04102a;
+}
+
+/* ---------- 6. ONYX BLACK ---------- */
+[data-theme="black"] {
+  --page-bg: #000000;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #1a1a1a 0%, #000000 60%, #000000 100%);
+  --stage-base: linear-gradient(160deg, #141414 0%, #0a0a0a 45%, #000000 100%);
+  --stage-tint-1: rgba(201, 162, 75, 0.1);
+  --stage-tint-2: rgba(40, 40, 40, 0.45);
+
+  --panel: linear-gradient(160deg, rgba(38, 38, 38, 0.78) 0%, rgba(12, 12, 12, 0.82) 100%);
+  --strip: linear-gradient(180deg, rgba(44, 44, 44, 0.92) 0%, rgba(16, 16, 16, 0.94) 100%);
+  --sil: rgba(0, 0, 0, 0.6);
+  --glow: rgba(201, 162, 75, 0.14);
+  --logo-face-a: #262626;
+  --logo-face-b: #131313;
+  --logo-face-c: #000000;
+}
+
+/* ============================================================
+   LIGHT THEMES
+   The ink flips to near-black and every "gold" becomes a dark antique
+   bronze — a light gold on ivory would be illegible from a distance.
+   ============================================================ */
+
+/* ---------- 7. WARM IVORY ---------- */
+[data-theme="ivory"] {
+  --page-bg: #efe6d0;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #fffaf0 0%, #f0e8d5 55%, #e4d9bf 100%);
+  --stage-base: linear-gradient(160deg, #fdf8ec 0%, #f6efdd 45%, #efe6d0 100%);
+  --stage-tint-1: rgba(154, 116, 32, 0.08);
+  --stage-tint-2: rgba(120, 96, 45, 0.1);
+
+  --ink: #241a08;
+  --ink-soft: rgba(43, 32, 12, 0.9);
+  --ink-dim: rgba(43, 32, 12, 0.74);
+  --ink-faint: rgba(43, 32, 12, 0.82);
+
+  --accent: #8a6516;
+  --accent-bright: #7a5811;
+  --accent-deep: #5f440c;
+
+  --grad-gold: linear-gradient(180deg, #6f5010 0%, #5a400b 55%, #453108 100%);
+  --grad-hero: linear-gradient(180deg, #755410 0%, #5c420b 45%, #443008 100%);
+  --grad-ribbon: linear-gradient(180deg, #e0be6d 0%, #c9a24b 45%, #a8801f 100%);
+  --ribbon-ink: #1f1605;
+
+  --panel: linear-gradient(160deg, rgba(255, 252, 244, 0.88) 0%, rgba(246, 239, 221, 0.92) 100%);
+  --panel-border: rgba(138, 101, 22, 0.45);
+  --panel-hair: rgba(138, 101, 22, 0.25);
+  --corner: rgba(138, 101, 22, 0.55);
+
+  --strip: linear-gradient(180deg, rgba(238, 228, 204, 0.95) 0%, rgba(228, 216, 188, 0.95) 100%);
+  --strip-border: rgba(138, 101, 22, 0.5);
+
+  --border-outer: rgba(138, 101, 22, 0.55);
+  --border-inner: rgba(122, 88, 17, 0.4);
+  --border-glow: rgba(154, 116, 32, 0.14);
+
+  --deco-stroke: rgba(138, 101, 22, 0.28);
+  --pattern: rgba(138, 101, 22, 0.1);
+  --sil: rgba(120, 96, 45, 0.14);
+  --particle: rgba(138, 101, 22, 0.45);
+  --glow: rgba(201, 162, 75, 0.14);
+  --ray-1: rgba(138, 101, 22, 0.05);
+  --ray-2: rgba(138, 101, 22, 0.04);
+  --ray-3: rgba(120, 96, 45, 0.03);
+  --ray-blend: multiply;
+
+  --shadow: rgba(90, 70, 30, 0.2);
+  --shadow-strong: rgba(90, 70, 30, 0.24);
+
+  --logo-face-a: #fdf8ec;
+  --logo-face-b: #f2e9d3;
+  --logo-face-c: #e7dabc;
+}
+
+/* ---------- 8. PURE WHITE ---------- */
+[data-theme="white"] {
+  --page-bg: #ffffff;
+  --frame-bg: radial-gradient(120% 120% at 50% -10%, #ffffff 0%, #f7f8f9 55%, #e9ecef 100%);
+  --stage-base: linear-gradient(160deg, #ffffff 0%, #fafbfc 45%, #f2f4f7 100%);
+  --stage-tint-1: rgba(154, 116, 32, 0.07);
+  --stage-tint-2: rgba(20, 36, 58, 0.07);
+
+  --ink: #12213a;
+  --ink-soft: rgba(18, 33, 58, 0.9);
+  --ink-dim: rgba(18, 33, 58, 0.72);
+  --ink-faint: rgba(18, 33, 58, 0.82);
+
+  --accent: #8a6516;
+  --accent-bright: #755410;
+  --accent-deep: #5a3f0b;
+
+  --grad-gold: linear-gradient(180deg, #6b4d0f 0%, #573e0a 55%, #423008 100%);
+  --grad-hero: linear-gradient(180deg, #714f0f 0%, #593f0a 45%, #422f07 100%);
+  --grad-ribbon: linear-gradient(180deg, #e8ca7d 0%, #cfa74f 45%, #bb9436 100%);
+  --ribbon-ink: #1c1404;
+
+  --panel: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(245, 247, 250, 0.94) 100%);
+  --panel-border: rgba(138, 101, 22, 0.42);
+  --panel-hair: rgba(138, 101, 22, 0.22);
+  --corner: rgba(138, 101, 22, 0.5);
+
+  --strip: linear-gradient(180deg, rgba(238, 241, 245, 0.96) 0%, rgba(226, 231, 238, 0.96) 100%);
+  --strip-border: rgba(138, 101, 22, 0.45);
+
+  --border-outer: rgba(138, 101, 22, 0.5);
+  --border-inner: rgba(117, 84, 16, 0.36);
+  --border-glow: rgba(154, 116, 32, 0.12);
+
+  --deco-stroke: rgba(18, 33, 58, 0.2);
+  --pattern: rgba(18, 33, 58, 0.08);
+  --sil: rgba(18, 33, 58, 0.12);
+  --particle: rgba(138, 101, 22, 0.4);
+  --glow: rgba(154, 116, 32, 0.12);
+  --ray-1: rgba(138, 101, 22, 0.04);
+  --ray-2: rgba(18, 33, 58, 0.03);
+  --ray-3: rgba(18, 33, 58, 0.025);
+  --ray-blend: multiply;
+
+  --shadow: rgba(18, 33, 58, 0.16);
+  --shadow-strong: rgba(18, 33, 58, 0.2);
+
+  --logo-face-a: #ffffff;
+  --logo-face-b: #f4f6f9;
+  --logo-face-c: #e7ebf1;
+}
