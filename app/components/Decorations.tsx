@@ -42,6 +42,34 @@ const SPARKS = Array.from({ length: 14 }, (_, i) => ({
   delay: -(i * 1.9),
 }));
 
+
+/* Crescent: an outer arc swept one way, an inner arc back, leaving the sliver.
+   Tilted the way a waxing crescent actually sits. */
+function Moon() {
+  return (
+    <div className="moon" aria-hidden="true">
+      <span className="moon-glow" />
+      <svg viewBox="0 0 64 64">
+        <path d="M49.00,9.75 A28,28 0 1 0 49.00,54.25 A24,24 0 1 1 49.00,9.75 Z" />
+      </svg>
+    </div>
+  );
+}
+
+/* A few stars keeping the moon company. */
+const MOON_STARS = [
+  { x: -26, y: 34, s: 1.15, d: 9, delay: -1 },
+  { x: -14, y: 74, s: 0.8, d: 11, delay: -5 },
+  { x: 112, y: 22, s: 0.95, d: 8, delay: -3 },
+  { x: 126, y: 82, s: 0.7, d: 12, delay: -7.5 },
+];
+
+const CLOUDS = [
+  { left: 8, top: 3, w: 26, h: 7, dur: 150, delay: 0 },
+  { left: 46, top: 9, w: 34, h: 8, dur: 190, delay: -60 },
+  { left: 68, top: 2, w: 22, h: 6, dur: 165, delay: -110 },
+];
+
 export default function Decorations() {
   const particles = Array.from({ length: 26 });
   return (
@@ -75,6 +103,48 @@ export default function Decorations() {
       {/* a beam of light crossing the banner */}
       <div className="sweep" />
 
+      {/* a soft band of light walking down the banner */}
+      <div className="spotlight" />
+
+      {/* ---- night sky: drifting cloud wisps, the crescent, its stars,
+             and a shooting star that crosses now and then ---- */}
+      {CLOUDS.map((c, i) => (
+        <span
+          key={i}
+          className="cloud"
+          style={{
+            left: `${c.left}%`,
+            top: `${c.top}%`,
+            width: `calc(var(--u) * ${c.w})`,
+            height: `calc(var(--v) * ${c.h})`,
+            animationDuration: `${c.dur}s`,
+            animationDelay: `${c.delay}s`,
+          }}
+        />
+      ))}
+
+      <div className="moon-field">
+        <Moon />
+        {MOON_STARS.map((st, i) => (
+          <svg
+            key={i}
+            className="moon-star"
+            viewBox="0 0 24 24"
+            style={{
+              left: `${st.x}%`,
+              top: `${st.y}%`,
+              width: `calc(var(--u) * ${st.s})`,
+              animationDuration: `${st.d}s`,
+              animationDelay: `${st.delay}s`,
+            }}
+          >
+            <path d="M12 0c1.1 6.5 4.4 9.8 12 12-7.6 2.2-10.9 5.5-12 12-1.1-6.5-4.4-9.8-12-12C7.6 9.8 10.9 6.5 12 0z" />
+          </svg>
+        ))}
+      </div>
+
+      <span className="shooting-star" />
+
       {/* side arches */}
       <svg style={{ position: "absolute", top: 0, left: 0, height: "100%", width: "calc(var(--u) * 18)" }}
         viewBox="0 0 180 500" preserveAspectRatio="none">
@@ -92,7 +162,8 @@ export default function Decorations() {
       </svg>
 
       {/* mosque silhouette skyline along the bottom */}
-      <svg style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: "calc(var(--v) * 22)" }}
+      <svg className="mosque-drift"
+        style={{ position: "absolute", bottom: 0, left: 0, width: "100%", height: "calc(var(--v) * 22)" }}
         viewBox="0 0 1600 220" preserveAspectRatio="none">
         <g className="mosque-sil">
           <path d="M0 220V150c40 0 60-20 60-50 0 30 20 50 60 50v70z" />

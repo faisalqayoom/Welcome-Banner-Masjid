@@ -67,7 +67,7 @@ export default function Logo() {
 
       {/* ---- rings ---- */}
       <circle cx="100" cy="100" r="96" fill="url(#lg-face)" stroke="url(#lg-gold)" strokeWidth="2.6" />
-      <g fill="url(#lg-gold)" opacity="0.85">
+      <g className="lg-beads" fill="url(#lg-gold)" opacity="0.85">
         {BEADS.map((b, i) => (
           <circle key={i} cx={b.cx} cy={b.cy} r="1.05" />
         ))}
