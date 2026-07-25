@@ -4,6 +4,7 @@ import Logo from "./components/Logo";
 import ThemePicker from "./components/ThemePicker";
 import DisplayControls from "./components/DisplayControls";
 import FullscreenButton from "./components/FullscreenButton";
+import WallClock from "./components/WallClock";
 import { ICONS } from "./components/Icons";
 
 export default function Page() {
@@ -16,6 +17,7 @@ export default function Page() {
       <div className="stage">
         <Decorations />
         <div className="stage-border" />
+        <WallClock />
 
         <div className="content">
           {/* ---------- Bismillah ---------- */}

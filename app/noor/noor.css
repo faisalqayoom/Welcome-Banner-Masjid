@@ -1,0 +1,1267 @@
+/* ============================================================
+   NOOR — GLASS WELCOME DISPLAY   (route: /noor)
+
+   Third display. Fully self-contained: every selector is `gl-` prefixed and
+   this file is imported only by this route, so "/" and "/ijtima" are untouched.
+
+   Same scaling contract as the other two displays:
+     --u = 1% of the stage WIDTH, --v = 1% of the stage HEIGHT.
+   Nothing is sized in px, so the composition holds its exact proportions from
+   3840x2160 down to 1366x768 with no scrolling and no reflow.
+
+   The look: layered "liquid glass" — every surface is a translucent pane with
+   a specular top edge, a soft inner bounce along the bottom, a refracted rim
+   and a deep ambient shadow, floating over a slow aurora. The colour a pane
+   shows is the light passing THROUGH it, which is why the orbs behind move:
+   the glass then reads as glass instead of as grey plastic.
+
+   THEMING — all eight palettes work here.
+   Two sources feed the page:
+     1. themes.css, via <html data-theme>. Its ink, accent and hero-gradient
+        tokens are already contrast-checked per theme, so every string on this
+        page resolves to those and is legible by construction.
+     2. the --gl-* tokens below, which describe the GLASS itself. Those cannot
+        come from themes.css: glass is white-on-dark for the six dark palettes
+        and flips to frosted-white-with-a-bronze-rim on ivory and white, where
+        a white rim over a white background would vanish.
+   ============================================================ */
+
+.gl-frame {
+  /* ---- type colours: inherited straight from the theme ---- */
+  --gold: var(--accent);
+  --gold-bright: var(--accent-bright);
+  --gold-deep: var(--accent-deep);
+
+  /* ---- scene (default: ROYAL NAVY) ---- */
+  --gl-frame-bg: #04060f;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #16224e 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #0a2f3f 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #0b1030 0%, #060a1c 58%, #04060f 100%);
+  --gl-orb-1: rgba(70, 224, 200, 0.4);
+  --gl-orb-2: rgba(125, 107, 255, 0.42);
+  --gl-orb-3: rgba(240, 207, 135, 0.3);
+  --gl-beam: rgba(255, 255, 255, 0.075);
+  --gl-mesh-line: rgba(255, 255, 255, 0.055);
+  --gl-arc-line: rgba(240, 207, 135, 0.24);
+  --gl-arc-glow: rgba(240, 207, 135, 0.14);
+  --gl-grain-blend: overlay;
+  --gl-grain-alpha: 0.19;
+  --gl-vig-1: rgba(2, 4, 12, 0.45);
+  --gl-vig-2: rgba(2, 4, 12, 0.72);
+  --gl-edge-line: rgba(255, 255, 255, 0.14);
+  --gl-edge-hi: rgba(255, 255, 255, 0.09);
+  --gl-edge-shade: rgba(6, 10, 30, 0.55);
+
+  /* ---- the glass ---- */
+  --gl-pane: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.07) 38%,
+    rgba(255, 255, 255, 0.035) 68%,
+    rgba(255, 255, 255, 0.075) 100%
+  );
+  --gl-pane-solid: linear-gradient(152deg, rgba(28, 38, 78, 0.82), rgba(10, 16, 40, 0.88));
+  --gl-rim: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.14) 26%,
+    rgba(255, 255, 255, 0.05) 52%,
+    rgba(255, 255, 255, 0.2) 78%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  --gl-spec: rgba(255, 255, 255, 0.55);
+  --gl-spec-lo: rgba(255, 255, 255, 0.14);
+  --gl-inner-1: rgba(255, 255, 255, 0.05);
+  --gl-inner-2: rgba(160, 190, 255, 0.06);
+  --gl-sh-1: rgba(2, 5, 18, 0.5);
+  --gl-sh-2: rgba(2, 5, 18, 0.42);
+  --gl-fill: rgba(255, 255, 255, 0.07);
+  --gl-fill-line: rgba(255, 255, 255, 0.12);
+  --gl-hair: rgba(255, 255, 255, 0.18);
+  --gl-streak: rgba(255, 255, 255, 0.14);
+  --gl-sheen: rgba(255, 255, 255, 0.2);
+  --gl-halo: rgba(240, 207, 135, 0.3);
+  --gl-glow: rgba(240, 207, 135, 0.35);
+  --gl-tsh: rgba(2, 5, 18, 0.45);
+  --gl-thin: 200;
+
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* letterbox fill matches the darkest corner of the stage, so the bars
+     disappear on any non-16:9 panel */
+  background: var(--gl-frame-bg);
+}
+
+/* ============================================================
+   PER-THEME SCENES
+   The five other dark palettes keep the glass recipe untouched and only
+   re-light the room behind it.
+   ============================================================ */
+
+[data-theme="emerald"] .gl-frame {
+  --gl-frame-bg: #02100c;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #0c4a35 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #06382f 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #052a20 0%, #031a14 58%, #02100c 100%);
+  --gl-orb-1: rgba(70, 224, 180, 0.42);
+  --gl-orb-2: rgba(120, 205, 255, 0.24);
+  --gl-orb-3: rgba(240, 207, 135, 0.3);
+  --gl-pane-solid: linear-gradient(152deg, rgba(14, 62, 46, 0.84), rgba(4, 26, 20, 0.9));
+}
+
+[data-theme="maroon"] .gl-frame {
+  --gl-frame-bg: #120409;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #4a1220 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #3a1526 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #2a0a12 0%, #1a060c 58%, #120409 100%);
+  --gl-orb-1: rgba(255, 120, 140, 0.34);
+  --gl-orb-2: rgba(196, 92, 200, 0.26);
+  --gl-orb-3: rgba(240, 207, 135, 0.32);
+  --gl-inner-2: rgba(255, 190, 200, 0.07);
+  --gl-pane-solid: linear-gradient(152deg, rgba(76, 24, 38, 0.84), rgba(30, 8, 14, 0.9));
+}
+
+[data-theme="royal"] .gl-frame {
+  --gl-frame-bg: #0a0417;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #2e1553 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #1b2a66 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #190b2d 0%, #0f0620 58%, #0a0417 100%);
+  --gl-orb-1: rgba(150, 110, 255, 0.44);
+  --gl-orb-2: rgba(220, 120, 255, 0.28);
+  --gl-orb-3: rgba(240, 207, 135, 0.28);
+  --gl-inner-2: rgba(200, 180, 255, 0.07);
+  --gl-pane-solid: linear-gradient(152deg, rgba(56, 30, 92, 0.84), rgba(20, 9, 38, 0.9));
+}
+
+[data-theme="azure"] .gl-frame {
+  --gl-frame-bg: #020a1c;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #123a7a 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #0a3550 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #071c46 0%, #04122c 58%, #020a1c 100%);
+  --gl-orb-1: rgba(80, 150, 255, 0.42);
+  --gl-orb-2: rgba(70, 220, 240, 0.3);
+  --gl-orb-3: rgba(240, 207, 135, 0.26);
+  --gl-pane-solid: linear-gradient(152deg, rgba(20, 56, 116, 0.84), rgba(5, 18, 46, 0.9));
+}
+
+[data-theme="black"] .gl-frame {
+  --gl-frame-bg: #000000;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #1e1e1e 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #161616 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #121212 0%, #080808 58%, #000000 100%);
+  --gl-orb-1: rgba(240, 207, 135, 0.22);
+  --gl-orb-2: rgba(255, 255, 255, 0.1);
+  --gl-orb-3: rgba(240, 207, 135, 0.18);
+  /* near-black has almost nothing to refract, so the panes carry a little
+     more of their own body — otherwise they read as flat holes */
+  --gl-pane: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.17) 0%,
+    rgba(255, 255, 255, 0.085) 38%,
+    rgba(255, 255, 255, 0.05) 68%,
+    rgba(255, 255, 255, 0.09) 100%
+  );
+  --gl-pane-solid: linear-gradient(152deg, rgba(44, 44, 44, 0.86), rgba(14, 14, 14, 0.92));
+  --gl-inner-2: rgba(255, 255, 255, 0.05);
+  --gl-vig-1: rgba(0, 0, 0, 0.4);
+  --gl-vig-2: rgba(0, 0, 0, 0.7);
+}
+
+/* ============================================================
+   LIGHT THEMES — the glass inverts
+   On ivory and white the panes become frosted white, the rim picks up a
+   bronze/slate line so an edge still exists, every specular stays white but
+   the ink, the gold and the shadows all go dark. Nothing here is a tint of
+   the dark recipe; it is the recipe rebuilt for a light room.
+   ============================================================ */
+[data-theme="ivory"] .gl-frame,
+[data-theme="white"] .gl-frame {
+  --gl-pane: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.56) 40%,
+    rgba(255, 255, 255, 0.46) 70%,
+    rgba(255, 255, 255, 0.66) 100%
+  );
+  --gl-rim: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(120, 95, 45, 0.28) 28%,
+    rgba(255, 255, 255, 0.7) 52%,
+    rgba(120, 95, 45, 0.22) 78%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  --gl-spec: rgba(255, 255, 255, 0.95);
+  --gl-spec-lo: rgba(255, 255, 255, 0.5);
+  --gl-inner-1: rgba(255, 255, 255, 0.42);
+  --gl-inner-2: rgba(255, 255, 255, 0.36);
+  --gl-sh-1: rgba(94, 76, 42, 0.22);
+  --gl-sh-2: rgba(94, 76, 42, 0.16);
+  --gl-fill: rgba(255, 255, 255, 0.62);
+  --gl-fill-line: rgba(120, 95, 45, 0.22);
+  --gl-hair: rgba(94, 76, 42, 0.32);
+  --gl-streak: rgba(255, 255, 255, 0.5);
+  --gl-sheen: rgba(255, 255, 255, 0.6);
+  --gl-halo: rgba(190, 150, 60, 0.22);
+  --gl-glow: transparent;
+  --gl-tsh: rgba(255, 255, 255, 0.7);
+  --gl-beam: rgba(255, 255, 255, 0.35);
+  --gl-mesh-line: rgba(94, 76, 42, 0.07);
+  --gl-arc-line: rgba(150, 115, 40, 0.3);
+  --gl-arc-glow: rgba(150, 115, 40, 0.12);
+  --gl-grain-blend: soft-light;
+  --gl-grain-alpha: 0.12;
+  --gl-vig-1: rgba(120, 100, 60, 0.1);
+  --gl-vig-2: rgba(120, 100, 60, 0.2);
+  --gl-edge-line: rgba(120, 95, 45, 0.22);
+  --gl-edge-hi: rgba(255, 255, 255, 0.75);
+  --gl-edge-shade: rgba(120, 100, 60, 0.14);
+  /* hairline weights read thinner on a bright field */
+  --gl-thin: 300;
+}
+
+[data-theme="ivory"] .gl-frame {
+  --gl-frame-bg: #e4d9bf;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #fffaf0 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #f2e6c8 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #fdf8ec 0%, #f4ecd8 58%, #ece0c4 100%);
+  --gl-orb-1: rgba(198, 150, 50, 0.26);
+  --gl-orb-2: rgba(126, 152, 112, 0.18);
+  --gl-orb-3: rgba(160, 120, 40, 0.22);
+  --gl-pane-solid: linear-gradient(152deg, rgba(255, 253, 246, 0.94), rgba(246, 239, 221, 0.96));
+}
+
+[data-theme="white"] .gl-frame {
+  --gl-frame-bg: #e9ecef;
+  --gl-stage-bg:
+    radial-gradient(88% 62% at 78% 6%, #ffffff 0%, transparent 62%),
+    radial-gradient(74% 58% at 14% 96%, #e6eef8 0%, transparent 60%),
+    radial-gradient(120% 96% at 50% 50%, #ffffff 0%, #f6f8fb 58%, #eceff5 100%);
+  --gl-orb-1: rgba(70, 120, 220, 0.18);
+  --gl-orb-2: rgba(190, 150, 60, 0.2);
+  --gl-orb-3: rgba(60, 180, 180, 0.14);
+  /* slate, not bronze — a warm rim on a cool white field looks dirty */
+  --gl-rim: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(26, 44, 72, 0.24) 28%,
+    rgba(255, 255, 255, 0.7) 52%,
+    rgba(26, 44, 72, 0.18) 78%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  --gl-fill-line: rgba(26, 44, 72, 0.18);
+  --gl-hair: rgba(26, 44, 72, 0.26);
+  --gl-mesh-line: rgba(26, 44, 72, 0.06);
+  --gl-sh-1: rgba(24, 40, 66, 0.2);
+  --gl-sh-2: rgba(24, 40, 66, 0.14);
+  --gl-vig-1: rgba(30, 48, 76, 0.07);
+  --gl-vig-2: rgba(30, 48, 76, 0.16);
+  --gl-edge-line: rgba(26, 44, 72, 0.18);
+  --gl-edge-shade: rgba(30, 48, 76, 0.12);
+  --gl-pane-solid: linear-gradient(152deg, rgba(255, 255, 255, 0.95), rgba(245, 247, 250, 0.96));
+}
+
+/* ============================================================
+   STAGE
+   ============================================================ */
+.gl-stage {
+  --u: min(1vw, 1.7778vh);
+  --v: calc(var(--u) * 0.5625);
+
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--ink);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  background: var(--gl-stage-bg);
+}
+
+/* ============================================================
+   AMBIENT LIGHT — what the glass is actually refracting
+   ============================================================ */
+.gl-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gl-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(calc(var(--u) * 5));
+  will-change: transform;
+}
+.gl-orb-a {
+  left: -8%;
+  top: -14%;
+  width: calc(var(--u) * 52);
+  height: calc(var(--u) * 52);
+  background: radial-gradient(closest-side, var(--gl-orb-1), transparent 72%);
+  animation: glOrbA 38s ease-in-out infinite;
+}
+.gl-orb-b {
+  right: -10%;
+  top: -6%;
+  width: calc(var(--u) * 56);
+  height: calc(var(--u) * 56);
+  background: radial-gradient(closest-side, var(--gl-orb-2), transparent 72%);
+  animation: glOrbB 46s ease-in-out infinite;
+}
+.gl-orb-c {
+  left: 34%;
+  bottom: -26%;
+  width: calc(var(--u) * 64);
+  height: calc(var(--u) * 64);
+  background: radial-gradient(closest-side, var(--gl-orb-3), transparent 70%);
+  animation: glOrbC 54s ease-in-out infinite;
+}
+@keyframes glOrbA {
+  0%, 100% { translate: 0 0; scale: 1; }
+  50%      { translate: calc(var(--u) * 16) calc(var(--v) * 20); scale: 1.16; }
+}
+@keyframes glOrbB {
+  0%, 100% { translate: 0 0; scale: 1.06; }
+  50%      { translate: calc(var(--u) * -20) calc(var(--v) * 26); scale: 0.92; }
+}
+@keyframes glOrbC {
+  0%, 100% { translate: 0 0; scale: 1; }
+  50%      { translate: calc(var(--u) * -22) calc(var(--v) * -16); scale: 1.12; }
+}
+
+/* a wide shaft of light crossing the whole stage, very slowly */
+.gl-beam {
+  position: absolute;
+  top: -40%;
+  left: calc(var(--u) * -40);
+  width: calc(var(--u) * 30);
+  height: 180%;
+  background: linear-gradient(90deg, transparent, var(--gl-beam), transparent);
+  filter: blur(calc(var(--u) * 2));
+  rotate: 14deg;
+  animation: glBeam 26s ease-in-out infinite;
+  will-change: translate;
+}
+@keyframes glBeam {
+  0%, 30% { translate: 0 0; }
+  100%    { translate: calc(var(--u) * 170) 0; }
+}
+
+/* faint technical mesh, the thing that makes a blur read as *glass* */
+.gl-mesh {
+  position: absolute;
+  inset: -2%;
+  background-image:
+    linear-gradient(var(--gl-mesh-line) 0.06vmin, transparent 0.06vmin),
+    linear-gradient(90deg, var(--gl-mesh-line) 0.06vmin, transparent 0.06vmin);
+  background-size: calc(var(--u) * 4) calc(var(--u) * 4);
+  mask-image: radial-gradient(78% 74% at 50% 44%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(78% 74% at 50% 44%, #000 0%, transparent 78%);
+  opacity: 0.5;
+  animation: glMesh 90s linear infinite;
+  will-change: translate;
+}
+@keyframes glMesh {
+  from { translate: 0 0; }
+  to   { translate: calc(var(--u) * -4) calc(var(--u) * -4); }
+}
+
+/* a thin luminous arc sweeping the upper right, like a lens flare edge */
+.gl-arc {
+  position: absolute;
+  right: -14%;
+  top: -34%;
+  width: calc(var(--u) * 62);
+  height: calc(var(--u) * 62);
+  border-radius: 50%;
+  border: calc(var(--u) * 0.1) solid var(--gl-arc-line);
+  box-shadow: 0 0 calc(var(--u) * 3) var(--gl-arc-glow);
+  mask-image: linear-gradient(200deg, #000 8%, transparent 46%);
+  -webkit-mask-image: linear-gradient(200deg, #000 8%, transparent 46%);
+  animation: glArc 40s ease-in-out infinite;
+}
+@keyframes glArc {
+  0%, 100% { rotate: -6deg; opacity: 0.7; }
+  50%      { rotate: 6deg;  opacity: 1; }
+}
+
+/* film grain — kills the banding that big blurs produce on a large panel */
+.gl-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--gl-grain-alpha);
+  mix-blend-mode: var(--gl-grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: calc(var(--u) * 14);
+}
+
+.gl-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    112% 96% at 50% 46%,
+    transparent 42%,
+    var(--gl-vig-1) 84%,
+    var(--gl-vig-2) 100%
+  );
+}
+
+/* the stage itself gets a glass edge, so the whole panel looks like one slab */
+.gl-edge {
+  position: absolute;
+  inset: calc(var(--u) * 0.9);
+  z-index: 30;
+  border-radius: calc(var(--u) * 1.6);
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 calc(var(--u) * 0.07) var(--gl-edge-line),
+    inset 0 calc(var(--u) * 0.16) calc(var(--u) * 0.6) var(--gl-edge-hi),
+    inset 0 0 calc(var(--u) * 5) var(--gl-edge-shade);
+}
+
+/* ============================================================
+   BENTO GRID
+   ============================================================ */
+.gl-bento {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.06fr 1.06fr 0.9fr;
+  grid-template-rows: minmax(0, 0.82fr) minmax(0, 1.06fr) minmax(0, 0.36fr);
+  grid-template-areas:
+    "hero hero rail"
+    "quran hadith rail"
+    "bar bar bar";
+  gap: calc(var(--v) * 2.2) calc(var(--u) * 1.4);
+  padding: calc(var(--v) * 3.2) calc(var(--u) * 3);
+}
+
+.gl-hero { grid-area: hero; }
+.gl-rail { grid-area: rail; }
+.gl-quote-quran { grid-area: quran; }
+.gl-quote-hadith { grid-area: hadith; }
+.gl-bar { grid-area: bar; }
+
+/* ============================================================
+   THE GLASS PANE
+   Six stacked effects, in the order light actually hits them:
+     1. the tint of the pane itself (--gl-pane)
+     2. what shows through it (backdrop blur + saturation lift)
+     3. the refracted rim (::before, a gradient stroke masked to the border)
+     4. the specular highlight running along the top edge (inset shadow)
+     5. the bounce light along the bottom inner edge (inset shadow)
+     6. the ambient shadow the slab casts on the scene (two outer shadows)
+   ============================================================ */
+.gl-card {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: calc(var(--u) * 1.7);
+  background: var(--gl-pane);
+  backdrop-filter: blur(calc(var(--u) * 1.9)) saturate(165%);
+  -webkit-backdrop-filter: blur(calc(var(--u) * 1.9)) saturate(165%);
+  box-shadow:
+    0 calc(var(--v) * 2.6) calc(var(--v) * 7) var(--gl-sh-1),
+    0 calc(var(--v) * 0.7) calc(var(--v) * 2) var(--gl-sh-2),
+    inset 0 calc(var(--u) * 0.085) 0 var(--gl-spec),
+    inset 0 calc(var(--u) * -0.085) 0 var(--gl-spec-lo),
+    inset 0 calc(var(--u) * -1.6) calc(var(--u) * 2.6) var(--gl-inner-1),
+    inset 0 calc(var(--u) * 1.6) calc(var(--u) * 3) var(--gl-inner-2);
+}
+
+/* refracted rim */
+.gl-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: calc(var(--u) * 0.075);
+  background: var(--gl-rim);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* the soft blown highlight in the top-left corner of every pane */
+.gl-sheen {
+  position: absolute;
+  left: -18%;
+  top: -110%;
+  width: 78%;
+  height: 200%;
+  z-index: 1;
+  background: radial-gradient(closest-side, var(--gl-sheen) 0%, transparent 72%);
+  filter: blur(calc(var(--u) * 1.2));
+  pointer-events: none;
+}
+
+/* every pane's own content sits above the rim and the sheen */
+.gl-card > *:not(.gl-sheen) {
+  position: relative;
+  z-index: 3;
+}
+
+/* ---- shared text primitives ---- */
+.arabic-x {
+  font-family: var(--font-amiri), serif;
+  direction: rtl;
+}
+
+.gl-dot {
+  width: calc(var(--u) * 0.3);
+  height: calc(var(--u) * 0.3);
+  flex: none;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.8;
+}
+
+.gl-rule {
+  width: calc(var(--u) * 5.6);
+  height: auto;
+  flex: none;
+  fill: var(--gold);
+  stroke: var(--gold);
+  stroke-width: 0.7;
+  opacity: 0.65;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.gl-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: calc(var(--v) * 1.5);
+  padding: calc(var(--v) * 2.4) calc(var(--u) * 3);
+}
+
+.gl-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(var(--v) * 0.75) calc(var(--u) * 2.2);
+  border-radius: 999px;
+  background: var(--gl-fill);
+  box-shadow:
+    inset 0 calc(var(--u) * 0.07) 0 var(--gl-spec),
+    inset 0 0 0 calc(var(--u) * 0.05) var(--gl-fill-line),
+    0 calc(var(--v) * 0.5) calc(var(--v) * 1.4) var(--gl-sh-2);
+}
+.gl-bismillah {
+  font-size: calc(var(--u) * 1.3);
+  font-weight: 700;
+  line-height: 1.7;
+  color: var(--gold-bright);
+  text-shadow: 0 0 calc(var(--u) * 0.8) var(--gl-glow);
+}
+.gl-bismillah-en {
+  font-size: calc(var(--u) * 0.8);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+/* The hero headline uses the theme's own hero gradient and sheen, the same
+   pair the welcome display at "/" uses — they are contrast-checked for every
+   palette, so this line can never wash out on the two light themes. Shared by
+   the Arabic and the English headline, which differ only in face and size. */
+.gl-hero-display {
+  font-weight: 700;
+  /* Two layers: a travelling sheen over the static gradient. The base layer
+     has to stay put — with only the animated layer the glyphs go transparent
+     for most of the cycle, because background-clip:text paints nothing where
+     the background has moved away. */
+  background-image:
+    linear-gradient(102deg, transparent 43%, var(--sheen) 50%, transparent 57%),
+    var(--grad-hero);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 calc(var(--v) * 0.5) calc(var(--u) * 0.5) var(--gl-sh-1));
+}
+.gl-hero-ar {
+  font-size: calc(var(--u) * 3.9);
+  line-height: 1.42;
+}
+/* English runs far wider than the Arabic at the same optical weight, so the
+   Latin headline is set smaller and in the serif. */
+.gl-hero-en-title {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 3.3);
+  font-weight: 600;
+  line-height: 1.24;
+  letter-spacing: 0.015em;
+}
+
+.gl-hero-strap {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1.4);
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.32);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--ink);
+}
+
+.gl-hero-salam {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1);
+  font-size: calc(var(--u) * 1.02);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.gl-hero-salam-en {
+  font-size: calc(var(--u) * 0.76);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
+}
+
+/* ============================================================
+   IDENTITY + VENUE RAIL
+   ============================================================ */
+.gl-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: calc(var(--v) * 2.4);
+  padding: calc(var(--v) * 2.8) calc(var(--u) * 1.8);
+}
+
+.gl-crest {
+  position: relative;
+  width: calc(var(--u) * 8.6);
+  height: calc(var(--u) * 8.6);
+  flex: none;
+}
+.gl-crest-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 190%;
+  height: 190%;
+  margin: -95% 0 0 -95%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--gl-halo), transparent 70%);
+  animation: glHalo 18s ease-in-out infinite;
+}
+@keyframes glHalo {
+  0%, 100% { opacity: 0.5; scale: 0.94; }
+  50%      { opacity: 1; scale: 1.06; }
+}
+.gl-crest-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: calc(var(--u) * 0.5);
+  background: var(--gl-fill);
+  box-shadow:
+    inset 0 calc(var(--u) * 0.1) 0 var(--gl-spec),
+    inset 0 0 0 calc(var(--u) * 0.06) var(--gl-fill-line),
+    0 calc(var(--v) * 1.2) calc(var(--v) * 3) var(--gl-sh-1);
+}
+.gl-crest-disc svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gl-org {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.5);
+}
+.gl-org-main {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.95);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: 0.05em;
+  color: var(--gold-bright);
+}
+.gl-org-sub {
+  font-size: calc(var(--u) * 0.76);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.46em;
+  text-indent: 0.46em;
+  color: var(--ink-dim);
+}
+
+.gl-hairline {
+  width: 74%;
+  height: calc(var(--u) * 0.07);
+  flex: none;
+  background: linear-gradient(90deg, transparent, var(--gl-hair), transparent);
+}
+
+.gl-venue {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.55);
+}
+.gl-venue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.45);
+  padding: calc(var(--v) * 0.5) calc(var(--u) * 1.1);
+  border-radius: 999px;
+  font-size: calc(var(--u) * 0.66);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  color: var(--gold-bright);
+  background: var(--gl-fill);
+  box-shadow: inset 0 0 0 calc(var(--u) * 0.05) var(--gl-fill-line);
+}
+.gl-venue-icon svg {
+  display: block;
+  width: calc(var(--u) * 0.95);
+  height: calc(var(--u) * 0.95);
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1.6;
+}
+.gl-venue-name {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.72);
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: 0.045em;
+  color: var(--ink);
+}
+.gl-venue-ar {
+  font-size: calc(var(--u) * 1);
+  line-height: 1.5;
+  color: var(--gold-bright);
+}
+.gl-venue-addr {
+  font-size: calc(var(--u) * 0.68);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+/* ---- live clock pill ---- */
+.gl-clock {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--v) * 0.3);
+  padding: calc(var(--v) * 1) calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 1);
+  background: var(--gl-fill);
+  box-shadow:
+    inset 0 calc(var(--u) * 0.07) 0 var(--gl-spec),
+    inset 0 0 0 calc(var(--u) * 0.05) var(--gl-fill-line);
+}
+.gl-clock-time {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 0.45);
+}
+.gl-clock-hm {
+  font-size: calc(var(--u) * 2.3);
+  font-weight: var(--gl-thin);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+/* Seconds sit a size down: they carry no information at a glance, and at
+   full size the whole pane would twitch every second. */
+.gl-clock-sec {
+  font-size: calc(var(--u) * 1.05);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+.gl-clock-sec::before {
+  content: ":";
+  padding-right: 0.08em;
+  opacity: 0.7;
+}
+.gl-clock-mer {
+  font-size: calc(var(--u) * 0.8);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  padding-left: calc(var(--u) * 0.1);
+  color: var(--gold-bright);
+}
+.gl-clock-dates {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 0.5);
+  font-size: calc(var(--u) * 0.64);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+.gl-clock-hijri {
+  color: var(--gold-bright);
+}
+
+/* ---- Maghrib, directly under the clock ----
+   Its own hairline-separated row so it never reads as part of the date, and
+   the time itself is set in ink at clock weight — this is the line a person
+   walking in is actually looking for. */
+.gl-maghrib {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 0.5);
+  width: 100%;
+  margin-top: calc(var(--v) * 0.7);
+  padding-top: calc(var(--v) * 0.85);
+  border-top: calc(var(--u) * 0.05) solid var(--gl-hair);
+}
+.gl-maghrib-icon svg {
+  display: block;
+  width: calc(var(--u) * 1.1);
+  height: calc(var(--u) * 1.1);
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gl-maghrib-label {
+  font-size: calc(var(--u) * 0.64);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+  color: var(--gold-bright);
+}
+.gl-maghrib-time {
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 0.28);
+  font-size: calc(var(--u) * 1.15);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.gl-maghrib-time em {
+  font-size: calc(var(--u) * 0.6);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+}
+
+/* ============================================================
+   QUOTE PANES
+   ============================================================ */
+
+/* space-between, not center: it pins the kicker to the top and the source to
+   the bottom of BOTH panes, so the two cards read as one aligned pair even
+   though their Arabic runs to a different number of lines. */
+.gl-quote {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  gap: calc(var(--v) * 1.2);
+  padding: calc(var(--v) * 2.2) calc(var(--u) * 2.2);
+}
+
+.gl-quote-head {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.9);
+}
+.gl-badge {
+  width: calc(var(--u) * 2.5);
+  height: calc(var(--u) * 2.5);
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--u) * 0.7);
+  background: var(--gl-fill);
+  box-shadow:
+    inset 0 calc(var(--u) * 0.07) 0 var(--gl-spec),
+    inset 0 0 0 calc(var(--u) * 0.05) var(--gl-fill-line);
+}
+.gl-badge svg {
+  width: calc(var(--u) * 1.4);
+  height: calc(var(--u) * 1.4);
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gl-quote-kicker {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--v) * 0.15);
+  font-size: calc(var(--u) * 0.72);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.3em;
+  color: var(--ink-soft);
+}
+.gl-quote-kicker em {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 0.86);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--gold-bright);
+}
+
+/* the ayah and its translation stay welded together and centred in whatever
+   room is left between the kicker and the source line */
+.gl-quote-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--v) * 1.6);
+}
+
+.gl-quote-ar {
+  font-family: var(--font-amiri), serif;
+  direction: rtl;
+  font-size: calc(var(--u) * 1.72);
+  font-weight: 700;
+  line-height: 1.72;
+  color: var(--ink);
+  text-shadow: 0 calc(var(--v) * 0.3) calc(var(--u) * 0.5) var(--gl-tsh);
+}
+
+.gl-quote-en {
+  max-width: 94%;
+  font-size: calc(var(--u) * 0.82);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.035em;
+  color: var(--ink-soft);
+}
+
+.gl-quote-foot {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.8);
+  font-family: var(--font-amiri), serif;
+  font-size: calc(var(--u) * 0.9);
+  line-height: 1.4;
+  color: var(--gold-bright);
+}
+.gl-quote-foot-rule {
+  width: calc(var(--u) * 3.4);
+  height: calc(var(--u) * 0.06);
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+
+/* ============================================================
+   FOOTER BAR
+   ============================================================ */
+.gl-bar {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  padding: calc(var(--v) * 1.4) calc(var(--u) * 2.6);
+}
+
+.gl-bar-quote {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(var(--v) * 0.2);
+}
+.gl-bar-ar {
+  font-family: var(--font-amiri), serif;
+  font-size: calc(var(--u) * 1.34);
+  font-weight: 700;
+  line-height: 1.6;
+  color: var(--gold-bright);
+}
+.gl-bar-en {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 0.8);
+  font-size: calc(var(--u) * 0.72);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+.gl-bar-en em {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 0.8);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+
+.gl-bar-sep {
+  width: calc(var(--u) * 0.07);
+  height: 68%;
+  flex: none;
+  background: linear-gradient(180deg, transparent, var(--gl-hair), transparent);
+}
+
+.gl-chips {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  gap: calc(var(--u) * 0.8);
+}
+.gl-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--v) * 0.4);
+  padding: calc(var(--v) * 0.9) calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 0.85);
+  background: var(--gl-fill);
+  box-shadow:
+    inset 0 calc(var(--u) * 0.06) 0 var(--gl-spec),
+    inset 0 0 0 calc(var(--u) * 0.045) var(--gl-fill-line);
+}
+.gl-chip svg {
+  width: calc(var(--u) * 1.9);
+  height: calc(var(--u) * 1.9);
+  fill: none;
+  stroke: var(--gold-bright);
+  stroke-width: 1.5;
+}
+.gl-chip span {
+  font-size: calc(var(--u) * 0.58);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   LANGUAGE SWAP  (<html data-lang="ar" | "en">)
+
+   The page ships BOTH languages and CSS shows one. That is deliberate:
+   switching is then a single attribute flip — instant, no re-render, and the
+   inline script in layout.tsx sets the attribute before first paint, so a
+   kiosk can never show a frame of the wrong language.
+
+   Arabic is the default, including when JavaScript never runs.
+   ============================================================ */
+.gl-en-only {
+  display: none;
+}
+[data-lang="en"] .gl-ar-only {
+  display: none;
+}
+[data-lang="en"] .gl-en-only {
+  display: block;
+}
+
+/* In English the translation stops being a footnote and becomes the quote
+   itself: display size, in the serif, at full ink. */
+[data-lang="en"] .gl-quote-en {
+  max-width: 96%;
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.42);
+  font-weight: 500;
+  line-height: 1.44;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* Same promotion for the line in the footer bar. */
+[data-lang="en"] .gl-bar-en {
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.15);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--ink);
+}
+[data-lang="en"] .gl-bar-en em {
+  font-size: calc(var(--u) * 0.82);
+  color: var(--gold-bright);
+}
+
+/* The strapline carries the greeting in English mode, which is a much longer
+   string than the Arabic mode's title — it needs the smaller setting. */
+[data-lang="en"] .gl-hero-strap {
+  font-size: calc(var(--u) * 1.02);
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+}
+
+/* ============================================================
+   MOTION
+   Everything here is opacity/transform (or a background-position sweep on
+   the hero calligraphy), so it composites on the GPU and holds 60 FPS on a
+   kiosk box. The reveal runs once; nothing else loops faster than 14s.
+   ============================================================ */
+
+/* one-time reveal — the panes settle in, each with a touch of scale so they
+   read as slabs of glass dropping into place rather than fading in flat */
+@keyframes glPaneIn {
+  from { opacity: 0; translate: 0 calc(var(--v) * 2.6); scale: 0.985; }
+  to   { opacity: 1; translate: 0 0; scale: 1; }
+}
+.gl-card {
+  animation: glPaneIn 1200ms cubic-bezier(0.22, 0.72, 0.28, 1) both;
+}
+.gl-hero { animation-delay: 140ms; }
+.gl-rail { animation-delay: 300ms; }
+.gl-quote-quran { animation-delay: 460ms; }
+.gl-quote-hadith { animation-delay: 600ms; }
+.gl-bar { animation-delay: 740ms; }
+
+@keyframes glEdgeIn {
+  from { opacity: 0; scale: 1.01; }
+  to   { opacity: 1; scale: 1; }
+}
+.gl-edge {
+  animation: glEdgeIn 1400ms cubic-bezier(0.22, 0.72, 0.28, 1) both;
+}
+
+/* a specular streak crossing each pane, staggered so the wall never has two
+   panes catching the light at once */
+.gl-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: linear-gradient(
+    104deg,
+    transparent 40%,
+    var(--gl-streak) 50%,
+    transparent 60%
+  );
+  background-size: 240% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  animation: glStreak 14s ease-in-out infinite;
+}
+@keyframes glStreak {
+  0%, 68% { background-position: -70% 0; }
+  100%    { background-position: 170% 0; }
+}
+.gl-rail::after { animation-delay: -2.8s; }
+.gl-quote-quran::after { animation-delay: -5.6s; }
+.gl-quote-hadith::after { animation-delay: -8.4s; }
+.gl-bar::after { animation-delay: -11.2s; }
+
+/* the gold sheen travelling through the hero headline */
+.gl-hero-display {
+  background-repeat: no-repeat, no-repeat;
+  background-size: 260% 100%, 100% 100%;
+  animation: glSheen 15s ease-in-out infinite;
+}
+@keyframes glSheen {
+  0%, 72% { background-position: -60% 0, 0 0; }
+  100%    { background-position: 170% 0, 0 0; }
+}
+
+/* the corner highlight on each pane breathes, staggered — opacity only, so
+   it costs nothing to composite */
+.gl-sheen {
+  animation: glBreathe 16s ease-in-out infinite;
+}
+@keyframes glBreathe {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+.gl-rail .gl-sheen { animation-delay: -3.2s; }
+.gl-quote-quran .gl-sheen { animation-delay: -6.4s; }
+.gl-quote-hadith .gl-sheen { animation-delay: -9.6s; }
+.gl-bar .gl-sheen { animation-delay: -12.8s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gl-orb,
+  .gl-beam,
+  .gl-mesh,
+  .gl-arc,
+  .gl-card,
+  .gl-card::after,
+  .gl-sheen,
+  .gl-hero-display,
+  .gl-crest-halo,
+  .gl-edge {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   FALLBACK — a panel with no backdrop-filter (very old WebView) would show
+   the panes as near-transparent washes and the type would fight the aurora.
+   Give those panes a solid-enough tint instead, per theme.
+   ============================================================ */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .gl-card {
+    background: var(--gl-pane-solid), var(--gl-pane);
+  }
+}
