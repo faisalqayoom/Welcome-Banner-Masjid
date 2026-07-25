@@ -1,0 +1,393 @@
+/* ============================================================
+   DEENI IJTIMA ANNOUNCEMENT PAGE  (route: /ijtima)
+
+   Fully self-contained: every selector is `ij-` prefixed and this file is
+   imported only by this route, so the welcome display at "/" is untouched.
+
+   Same scaling contract as the welcome page:
+     --u = 1% of the stage WIDTH, --v = 1% of the stage HEIGHT.
+   Everything is sized in those units, so the composition holds its exact
+   proportions from 3840x2160 down to 1366x768 with no scrolling.
+   ============================================================ */
+
+.ij-frame {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* letterbox fill picks up the artwork's deep green so bars blend in */
+  background: #0d3b2b;
+}
+
+.ij-stage {
+  --u: min(1vw, 1.7778vh);
+  --v: calc(var(--u) * 0.5625);
+
+  /* palette sampled from the reference artwork */
+  --ij-green: #0f4a35;
+  --ij-green-deep: #0a3527;
+  --ij-gold: #c9a227;
+  --ij-gold-bright: #e8c766;
+  --ij-gold-pale: #f2dfa4;
+  --ij-cream: #fbf6e9;
+  --ij-ink: #1d2b1f;
+
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh);
+  overflow: hidden;
+
+  /* Artwork resolved at build time from public/backgrounds (any filename).
+     The gradient is only a stand-in if that folder is empty. */
+  background-color: #f4ecd8;
+  background-image:
+    var(--ij-bg, none),
+    radial-gradient(70% 55% at 50% 8%, #fffdf6 0%, #f6eeda 45%, #e9dcbe 100%);
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+/* The artwork's own green band only covers the bottom ~7% of the image, which
+   is too thin to seat two lines of Nastaliq. This extends it upward with the
+   band's exact sampled colour (rgb(4,45,31)) so the footer sits ON the band
+   instead of floating over the light plaza behind it. */
+.ij-stage::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--v) * 24);
+  background: linear-gradient(
+    180deg,
+    rgba(4, 45, 31, 0) 0%,
+    rgba(4, 45, 31, 0.38) 32%,
+    rgba(4, 45, 31, 0.82) 62%,
+    rgba(4, 45, 31, 0.96) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ij-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* generous side padding keeps text clear of the artwork's lanterns,
+     minarets, Qur'an stand and mihrab */
+  padding: calc(var(--v) * 1.4) calc(var(--u) * 8) calc(var(--v) * 1.8);
+  direction: rtl;
+  text-align: center;
+}
+
+/* ---- shared type ---- */
+.ij-content :is(h1, h2, p, div, span) {
+  font-family: var(--font-nastaliq), serif;
+}
+.ij-bismillah,
+.ij-quote-ar {
+  font-family: var(--font-amiri-ij), serif;
+}
+
+/* ---------- Bismillah ---------- */
+.ij-bismillah {
+  font-size: calc(var(--u) * 1.1);
+  font-weight: 700;
+  line-height: 1.65;
+  color: var(--ij-green);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Main title ---------- */
+.ij-title {
+  /* Nastaliq drops far below the baseline and stacks high above it —
+     a tight line box would clip the kashida and the dots. */
+  font-size: calc(var(--u) * 4.3);
+  font-weight: 700;
+  line-height: 1.42;
+  color: var(--ij-green);
+  margin-top: calc(var(--v) * 0.8);
+  text-shadow:
+    0 calc(var(--u) * 0.08) calc(var(--u) * 0.2) rgba(10, 53, 39, 0.28),
+    0 0 calc(var(--u) * 0.9) rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Sub-title ---------- */
+.ij-subtitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1.4);
+  margin-top: calc(var(--v) * 0.8);
+  font-size: calc(var(--u) * 1.4);
+  line-height: 1.95;
+  color: var(--ij-ink);
+}
+.ij-flourish {
+  width: calc(var(--u) * 7);
+  height: auto;
+  flex: none;
+  fill: none;
+  stroke: var(--ij-gold);
+  stroke-width: 1.4;
+  opacity: 0.85;
+}
+
+/* ---------- Green welcome lozenge ---------- */
+.ij-welcome {
+  position: relative;
+  width: 76%;
+  margin-top: calc(var(--v) * 0.9);
+  padding: calc(var(--v) * 1.3) calc(var(--u) * 5) calc(var(--v) * 1.5);
+  background: linear-gradient(160deg, var(--ij-green) 0%, var(--ij-green-deep) 100%);
+  /* the reference panel is a lozenge: flat sides, strongly rounded ends */
+  border-radius: calc(var(--u) * 3.2) / calc(var(--v) * 9);
+  border: calc(var(--u) * 0.16) solid var(--ij-gold);
+  box-shadow:
+    0 calc(var(--u) * 0.5) calc(var(--u) * 1.8) rgba(10, 40, 30, 0.35),
+    0 0 0 calc(var(--u) * 0.06) rgba(242, 223, 164, 0.35) inset;
+}
+.ij-welcome-title {
+  font-size: calc(var(--u) * 2.85);
+  font-weight: 700;
+  line-height: 1.8;
+  background: linear-gradient(180deg, var(--ij-gold-pale) 0%, var(--ij-gold-bright) 45%, var(--ij-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 calc(var(--u) * 0.08) calc(var(--u) * 0.2) rgba(0, 0, 0, 0.45));
+}
+.ij-welcome-body {
+  margin-top: calc(var(--v) * 0.7);
+  /* keeps the paragraph wrapping to two balanced lines instead of one
+     over-long line that reaches the lozenge edges */
+  max-width: 96%;
+  margin-inline: auto;
+  font-size: calc(var(--u) * 1.26);
+  font-weight: 500;
+  line-height: 1.95;
+  color: var(--ij-cream);
+}
+
+/* corner ornaments inside the lozenge */
+.ij-orn {
+  fill: var(--ij-gold-bright);
+  stroke: var(--ij-gold-bright);
+  stroke-width: 0.8;
+  opacity: 0.9;
+}
+.ij-welcome > .ij-orn {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--u) * 2.8);
+  height: calc(var(--u) * 2.8);
+  transform: translateY(-50%);
+  opacity: 0.55;
+}
+.ij-welcome > .ij-orn.is-right { right: calc(var(--u) * 2.2); }
+.ij-welcome > .ij-orn.is-left { left: calc(var(--u) * 2.2); }
+
+/* ---------- Quote cards ---------- */
+.ij-quotes {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: calc(var(--u) * 1.6);
+  width: 78%;
+  margin-top: calc(var(--v) * 0.9);
+}
+.ij-quote {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--v) * 0.45);
+  padding: calc(var(--v) * 1) calc(var(--u) * 1.5);
+  background: linear-gradient(170deg, rgba(255, 253, 246, 0.95) 0%, rgba(248, 240, 222, 0.95) 100%);
+  border: calc(var(--u) * 0.11) solid var(--ij-gold);
+  border-radius: calc(var(--u) * 1.1);
+  box-shadow: 0 calc(var(--u) * 0.3) calc(var(--u) * 1.1) rgba(60, 50, 20, 0.16);
+}
+.ij-quote-ar {
+  font-size: calc(var(--u) * 1.2);
+  font-weight: 700;
+  line-height: 1.8;
+  color: var(--ij-green);
+}
+.ij-quote-ur {
+  font-size: calc(var(--u) * 1);
+  line-height: 1.9;
+  color: var(--ij-ink);
+}
+.ij-quote-ref {
+  font-size: calc(var(--u) * 0.92);
+  line-height: 1.85;
+  color: #6d5a1c;
+}
+.ij-quote-divider {
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.ij-quote-divider .ij-orn {
+  width: calc(var(--u) * 2.6);
+  height: calc(var(--u) * 2.6);
+  fill: var(--ij-gold);
+  stroke: var(--ij-gold);
+  opacity: 0.8;
+}
+
+/* ---------- Venue / date / time strip ---------- */
+.ij-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 2.8);
+  margin-top: calc(var(--v) * 1);
+}
+.ij-info-item {
+  display: flex;
+  /* row-reverse inside an RTL container puts the icon on the LEFT of the
+     text, matching the reference artwork */
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: calc(var(--u) * 0.9);
+}
+.ij-info-icon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--u) * 3.1);
+  height: calc(var(--u) * 3.1);
+  flex: none;
+  border-radius: 50%;
+  background: linear-gradient(160deg, var(--ij-green) 0%, var(--ij-green-deep) 100%);
+  border: calc(var(--u) * 0.09) solid var(--ij-gold);
+}
+.ij-info-icon svg {
+  width: calc(var(--u) * 1.9);
+  height: calc(var(--u) * 1.9);
+  fill: none;
+  stroke: var(--ij-gold-bright);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ij-info-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* The date's "27" is set in Amiri at a much larger size than the Nastaliq
+   labels beside it. Matching line-boxes (1.3x1.6 = 2.08u, 2.2x0.95 = 2.09u)
+   makes all three stacks identical in height, so the row aligns. */
+.ij-info-main,
+.ij-info-date {
+  display: block;
+}
+.ij-info-main {
+  font-size: calc(var(--u) * 1.3);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--ij-green);
+}
+.ij-info-sub {
+  font-size: calc(var(--u) * 1.05);
+  line-height: 1.8;
+  color: var(--ij-ink);
+}
+.ij-info-date {
+  font-family: var(--font-amiri-ij), serif;
+  font-size: calc(var(--u) * 2.2);
+  font-weight: 700;
+  line-height: 0.95;
+  color: var(--ij-green);
+}
+.ij-info-sep {
+  width: calc(var(--u) * 0.1);
+  height: calc(var(--u) * 3);
+  background: linear-gradient(180deg, transparent, var(--ij-gold), transparent);
+}
+
+/* ---------- Organisation footer ---------- */
+.ij-org {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: calc(var(--v) * 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ij-org-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1.6);
+}
+.ij-org-row .ij-orn.is-small {
+  width: calc(var(--u) * 2.4);
+  height: calc(var(--u) * 2.4);
+  flex: none;
+  opacity: 0.95;
+}
+.ij-org-name {
+  font-size: calc(var(--u) * 2.35);
+  font-weight: 700;
+  line-height: 1.95;
+  background: linear-gradient(180deg, var(--ij-gold-pale) 0%, var(--ij-gold-bright) 50%, var(--ij-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 calc(var(--u) * 0.08) calc(var(--u) * 0.22) rgba(0, 0, 0, 0.4));
+}
+.ij-org-sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1.1);
+  margin-top: calc(var(--v) * 0.6);
+  font-size: calc(var(--u) * 1.15);
+  line-height: 1.85;
+  color: var(--ij-cream);
+}
+.ij-dot {
+  width: calc(var(--u) * 0.42);
+  height: calc(var(--u) * 0.42);
+  border-radius: 50%;
+  background: var(--ij-gold-bright);
+}
+
+/* ---------- General invitation line ----------
+   Fills the gap between the info strip and the footer with something useful:
+   an explicit open invitation, which is what these banners normally carry. */
+.ij-invite {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 0.8);
+  margin-top: calc(var(--v) * 1);
+  padding: calc(var(--v) * 0.45) calc(var(--u) * 3);
+  border-radius: 999px;
+  background: linear-gradient(170deg, rgba(255, 253, 246, 0.94) 0%, rgba(248, 240, 222, 0.94) 100%);
+  border: calc(var(--u) * 0.09) solid var(--ij-gold);
+  box-shadow: 0 calc(var(--u) * 0.22) calc(var(--u) * 0.8) rgba(60, 50, 20, 0.16);
+  font-size: calc(var(--u) * 1.08);
+  line-height: 1.85;
+  color: var(--ij-ink);
+}
+.ij-invite b {
+  font-weight: 700;
+  color: var(--ij-green);
+}
+.ij-invite .ij-dot {
+  background: var(--ij-gold);
+}

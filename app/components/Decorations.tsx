@@ -33,13 +33,23 @@ function Lantern({ className, scale = 1 }: { className: string; scale?: number }
   );
 }
 
+/* Fixed positions so server and client render identically. */
+const SPARKS = Array.from({ length: 14 }, (_, i) => ({
+  x: (i * 13.7 + 6) % 92 + 3,
+  y: (i * 29.3 + 11) % 74 + 8,
+  size: 0.7 + (i % 3) * 0.35,
+  dur: 7 + (i % 5) * 1.6,
+  delay: -(i * 1.9),
+}));
+
 export default function Decorations() {
-  const particles = Array.from({ length: 16 });
+  const particles = Array.from({ length: 26 });
   return (
     <div className="deco" aria-hidden="true">
       {/* geometric pattern wash — viewBox-driven so the tile scales with the
           display instead of staying a fixed 90px at every resolution */}
       <svg
+        className="pattern-wash"
         viewBox="0 0 1600 900"
         preserveAspectRatio="none"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", opacity: 0.5 }}
@@ -52,12 +62,18 @@ export default function Decorations() {
             </g>
           </pattern>
         </defs>
-        <rect width="1600" height="900" fill="url(#stars)" />
+        <rect x="-90" y="-90" width="1780" height="1080" fill="url(#stars)" />
       </svg>
 
       {/* soft light rays from above + central glow */}
       <div className="rays" />
       <div className="glow" />
+
+      {/* a soft pool of light that drifts slowly across the banner */}
+      <div className="aurora" />
+
+      {/* a beam of light crossing the banner */}
+      <div className="sweep" />
 
       {/* side arches */}
       <svg style={{ position: "absolute", top: 0, left: 0, height: "100%", width: "calc(var(--u) * 18)" }}
@@ -101,13 +117,33 @@ export default function Decorations() {
       <Lantern className="l3" scale={1.05} />
       <Lantern className="l4" scale={0.85} />
 
+      {/* twinkling sparkles */}
+      <div className="sparkles">
+        {SPARKS.map((s, i) => (
+          <svg
+            key={i}
+            className="spark"
+            viewBox="0 0 24 24"
+            style={{
+              left: `${s.x.toFixed(2)}%`,
+              top: `${s.y.toFixed(2)}%`,
+              width: `calc(var(--u) * ${s.size.toFixed(2)})`,
+              animationDuration: `${s.dur}s`,
+              animationDelay: `${s.delay}s`,
+            }}
+          >
+            <path d="M12 0c1.1 6.5 4.4 9.8 12 12-7.6 2.2-10.9 5.5-12 12-1.1-6.5-4.4-9.8-12-12C7.6 9.8 10.9 6.5 12 0z" />
+          </svg>
+        ))}
+      </div>
+
       {/* rising particles */}
       <div className="particles">
         {particles.map((_, i) => {
-          const left = (i * 6.1 + 4) % 96;
-          const dur = 16 + (i % 6) * 4;
-          const delay = -(i * 1.7);
-          const size = 0.18 + (i % 4) * 0.08;
+          const left = (i * 3.77 + 3) % 96;
+          const dur = 14 + (i % 7) * 3.5;
+          const delay = -(i * 1.3);
+          const size = 0.16 + (i % 5) * 0.07;
           return (
             <span
               key={i}

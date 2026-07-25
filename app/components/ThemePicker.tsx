@@ -3,25 +3,42 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { THEMES, DEFAULT_THEME, STORAGE_KEY } from "../themes";
 
-const HIDE_AFTER_MS = 4000;
+const IDLE_HIDE_MS = 6000;
+
+function PaletteIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 3a9 9 0 0 0 0 18c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.4-.6-.4-1 0-.9.7-1.6 1.6-1.6h1.9A4.8 4.8 0 0 0 21 11C21 6.6 17 3 12 3z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <circle cx="7.5" cy="11.5" r="1.3" fill="currentColor" />
+      <circle cx="10.5" cy="7.5" r="1.3" fill="currentColor" />
+      <circle cx="15.5" cy="7.8" r="1.3" fill="currentColor" />
+      <circle cx="18" cy="11.2" r="1.3" fill="currentColor" />
+    </svg>
+  );
+}
 
 /**
  * Theme control for the signage display.
  *
- * Deliberately invisible while the display is just running — it only fades in
- * when someone moves a mouse or presses a key, then hides itself again. That
- * keeps the "this is a printed banner, not a website" feel intact.
+ * A small palette icon sits quietly in the corner at low opacity. Clicking it
+ * shows or hides the swatch row, so the colours are reachable on site without
+ * ever putting permanent chrome on the banner.
  *
  * Three ways to set the theme, in priority order:
  *   1. ?theme=emerald in the URL   — best for a kiosk you configure once
  *   2. number keys 1-8, or T/→ ←   — best for a TV remote or keyboard on site
- *   3. clicking a swatch
+ *   3. the palette icon + swatches
  * The choice is saved to localStorage, so it survives a reboot.
  */
 export default function ThemePicker() {
   const [theme, setTheme] = useState<string>(DEFAULT_THEME);
-  const [visible, setVisible] = useState(false);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [open, setOpen] = useState(false);
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // The inline script in layout.tsx has already applied the theme before paint;
   // mirror it into React state so the active swatch is correct.
@@ -39,10 +56,10 @@ export default function ThemePicker() {
     }
   }, []);
 
-  const reveal = useCallback(() => {
-    setVisible(true);
-    if (hideTimer.current) clearTimeout(hideTimer.current);
-    hideTimer.current = setTimeout(() => setVisible(false), HIDE_AFTER_MS);
+  /** Any interaction restarts the idle countdown that closes the row again. */
+  const keepAwake = useCallback(() => {
+    if (idleTimer.current) clearTimeout(idleTimer.current);
+    idleTimer.current = setTimeout(() => setOpen(false), IDLE_HIDE_MS);
   }, []);
 
   const step = useCallback(
@@ -58,8 +75,7 @@ export default function ThemePicker() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (hideTimer.current) clearTimeout(hideTimer.current);
-        setVisible(false);
+        setOpen(false);
         return;
       }
       const n = Number(e.key);
@@ -69,41 +85,58 @@ export default function ThemePicker() {
         step(1);
       } else if (e.key === "ArrowLeft") {
         step(-1);
+      } else {
+        return;
       }
-      reveal();
+      setOpen(true);
+      keepAwake();
     };
-
-    window.addEventListener("mousemove", reveal, { passive: true });
     window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("mousemove", reveal);
       window.removeEventListener("keydown", onKey);
-      if (hideTimer.current) clearTimeout(hideTimer.current);
+      if (idleTimer.current) clearTimeout(idleTimer.current);
     };
-  }, [apply, reveal, step]);
+  }, [apply, keepAwake, step]);
 
-  // Restore the cursor only while the control is on screen.
+  // Restore the cursor only while the control is in use.
   useEffect(() => {
-    document.documentElement.classList.toggle("ui-on", visible);
-  }, [visible]);
+    document.documentElement.classList.toggle("ui-on", open);
+    if (open) keepAwake();
+  }, [open, keepAwake]);
 
   return (
-    <div className={`theme-ui${visible ? " is-visible" : ""}`}>
-      <span className="theme-ui-label">Theme</span>
-      {THEMES.map((t, i) => (
-        <button
-          key={t.id}
-          type="button"
-          className={`theme-dot${theme === t.id ? " is-active" : ""}`}
-          style={{ background: t.swatch }}
-          onClick={() => apply(t.id)}
-          title={`${t.label}  (press ${i + 1})`}
-          aria-label={t.label}
-          aria-pressed={theme === t.id}
-          tabIndex={visible ? 0 : -1}
-        />
-      ))}
-      <span className="theme-ui-hint">1–8 · T to cycle</span>
+    <div className={`theme-ui${open ? " is-open" : ""}`} onMouseMove={keepAwake}>
+      <div className="theme-swatches" aria-hidden={!open}>
+        <span className="theme-ui-label">Theme</span>
+        {THEMES.map((t, i) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`theme-dot${theme === t.id ? " is-active" : ""}`}
+            style={{ background: t.swatch }}
+            onClick={() => {
+              apply(t.id);
+              keepAwake();
+            }}
+            title={`${t.label}  (press ${i + 1})`}
+            aria-label={t.label}
+            aria-pressed={theme === t.id}
+            tabIndex={open ? 0 : -1}
+          />
+        ))}
+        <span className="theme-ui-hint">1–8 · T</span>
+      </div>
+
+      <button
+        type="button"
+        className="theme-toggle"
+        onClick={() => setOpen((v) => !v)}
+        title={open ? "Hide colour palette" : "Show colour palette"}
+        aria-label={open ? "Hide colour palette" : "Show colour palette"}
+        aria-expanded={open}
+      >
+        <PaletteIcon />
+      </button>
     </div>
   );
 }
