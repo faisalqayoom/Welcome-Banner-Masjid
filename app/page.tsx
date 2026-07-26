@@ -1,11 +1,9 @@
-import React from "react";
 import Decorations from "./components/Decorations";
 import Logo from "./components/Logo";
 import ThemePicker from "./components/ThemePicker";
 import DisplayControls from "./components/DisplayControls";
 import FullscreenButton from "./components/FullscreenButton";
 import WallClock from "./components/WallClock";
-import { ICONS } from "./components/Icons";
 
 export default function Page() {
   return (
@@ -49,28 +47,11 @@ export default function Page() {
             <div className="arabic ar">أَهْلًا وَسَهْلًا مَرْحَبًا</div>
           </section>
 
-          {/* ---------- Two panels ----------
-              Ordered for right-to-left reading: the Qur'an panel sits on the
-              RIGHT (read first), the Hadith panel on the LEFT (read second). */}
+          {/* ---------- The ayah ----------
+              One panel, set large. A banner read from the back of a hall can
+              carry one verse properly or three quotes badly; this is the
+              former. */}
           <section className="panels">
-            {/* Hadith — left */}
-            <div className="panel">
-              <span className="corner tl" />
-              <span className="corner tr" />
-              <span className="corner bl" />
-              <span className="corner br" />
-              <span className="ribbon arabic">قال رسول الله ﷺ</span>
-              <div className="arabic ayah">
-                مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ
-              </div>
-              <div className="trans">
-                Whoever treads a path in search of knowledge, Allah will make easy
-                for him a path to Paradise.
-              </div>
-              <div className="ref">Sahih Muslim</div>
-            </div>
-
-            {/* Qur'an — right */}
             <div className="panel">
               <span className="corner tl" />
               <span className="corner tr" />
@@ -88,7 +69,7 @@ export default function Page() {
             </div>
           </section>
 
-          {/* ---------- Center strip ---------- */}
+          {/* ---------- Centre strip ---------- */}
           <section className="strip">
             <div className="ar gold-text">العِلْمُ قَبْلَ القَوْلِ وَالعَمَلِ</div>
             <div className="en">Knowledge is acquired before speech and action</div>
@@ -102,27 +83,6 @@ export default function Page() {
             <div className="org-line">Jamiat Ahle Hadees · Shar Shali</div>
           </section>
 
-          {/* ---------- Dawah strip ---------- */}
-          <section className="strip">
-            <div className="ar gold-text">الدعوة إلى الله تعالى علم وعمل</div>
-            <div className="en">Dawah to Allah is Knowledge and Action</div>
-            <div className="en small">
-              Let us seek beneficial knowledge and act upon it
-            </div>
-          </section>
-
-          {/* ---------- Bottom icons ---------- */}
-          <section className="icons">
-            {ICONS.map(({ Comp, label }, i) => (
-              <React.Fragment key={label}>
-                {i > 0 && <span className="icon-sep" />}
-                <div className="icon-item">
-                  <Comp />
-                  <span className="lbl">{label}</span>
-                </div>
-              </React.Fragment>
-            ))}
-          </section>
         </div>
       </div>
     </main>

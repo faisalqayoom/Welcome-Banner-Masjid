@@ -200,9 +200,8 @@
   display: flex;
   align-items: stretch;
   justify-content: center;
-  gap: calc(var(--u) * 1.6);
-  width: 78%;
-  margin-top: calc(var(--v) * 0.9);
+  width: 76%;
+  margin-top: calc(var(--v) * 1);
 }
 .ij-quote {
   flex: 1 1 0;
@@ -210,26 +209,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--v) * 0.45);
-  padding: calc(var(--v) * 1) calc(var(--u) * 1.5);
+  /* Amiri sets deep descenders and the verse is now large: without this gap
+     they reach into the Nastaliq line underneath. */
+  gap: calc(var(--v) * 1);
+  padding: calc(var(--v) * 1.4) calc(var(--u) * 3);
   background: linear-gradient(170deg, rgba(255, 253, 246, 0.95) 0%, rgba(248, 240, 222, 0.95) 100%);
   border: calc(var(--u) * 0.11) solid var(--ij-gold);
   border-radius: calc(var(--u) * 1.1);
   box-shadow: 0 calc(var(--u) * 0.3) calc(var(--u) * 1.1) rgba(60, 50, 20, 0.16);
 }
 .ij-quote-ar {
-  font-size: calc(var(--u) * 1.2);
+  font-size: calc(var(--u) * 2.9);
   font-weight: 700;
-  line-height: 1.8;
+  /* Amiri's kashida and ya' swash hang well below the baseline; at this size
+     a 1.7 line box let them land on the Nastaliq line underneath. */
+  line-height: 2.05;
   color: var(--ij-green);
 }
 .ij-quote-ur {
-  font-size: calc(var(--u) * 1);
+  font-size: calc(var(--u) * 1.5);
   line-height: 1.9;
   color: var(--ij-ink);
 }
 .ij-quote-ref {
-  font-size: calc(var(--u) * 0.92);
+  font-size: calc(var(--u) * 1.1);
   line-height: 1.85;
   color: #6d5a1c;
 }

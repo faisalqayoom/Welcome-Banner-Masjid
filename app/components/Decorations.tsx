@@ -97,15 +97,6 @@ export default function Decorations() {
       <div className="rays" />
       <div className="glow" />
 
-      {/* a soft pool of light that drifts slowly across the banner */}
-      <div className="aurora" />
-
-      {/* a beam of light crossing the banner */}
-      <div className="sweep" />
-
-      {/* a soft band of light walking down the banner */}
-      <div className="spotlight" />
-
       {/* ---- night sky: drifting cloud wisps, the crescent, its stars,
              and a shooting star that crosses now and then ---- */}
       {CLOUDS.map((c, i) => (

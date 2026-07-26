@@ -95,7 +95,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding: calc(var(--v) * 3.4) calc(var(--u) * 3.6) calc(var(--v) * 3.4);
-  gap: calc(var(--v) * 0.55);
+  gap: calc(var(--v) * 1.1);
 }
 
 /* ---- text primitives ---- */
@@ -212,15 +212,15 @@ body {
    PANELS (Quran ayah + Hadith)
    ============================================================ */
 .panels {
-  width: 100%;
+  width: 96%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: calc(var(--u) * 2);
 }
 .panel {
   position: relative;
   border-radius: calc(var(--u) * 0.7);
-  padding: calc(var(--v) * 1.3) calc(var(--u) * 1.8);
+  padding: calc(var(--v) * 2.2) calc(var(--u) * 4);
   background: var(--panel);
   border: calc(var(--u) * 0.1) solid var(--panel-border);
   box-shadow:
@@ -231,7 +231,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--v) * 0.5);
+  gap: calc(var(--v) * 0.9);
 }
 .panel::before {
   content: "";
@@ -245,8 +245,8 @@ body {
 /* corner flourishes */
 .panel .corner {
   position: absolute;
-  width: calc(var(--u) * 1.4);
-  height: calc(var(--u) * 1.4);
+  width: calc(var(--u) * 2.1);
+  height: calc(var(--u) * 2.1);
   border: calc(var(--u) * 0.09) solid var(--corner);
 }
 .panel .corner.tl { top: calc(var(--u) * 0.7); left: calc(var(--u) * 0.7); border-right: none; border-bottom: none; }
@@ -258,9 +258,9 @@ body {
 .ribbon {
   position: relative;
   display: inline-block;
-  padding: calc(var(--v) * 0.45) calc(var(--u) * 1.8);
+  padding: calc(var(--v) * 0.5) calc(var(--u) * 2.4);
   font-family: var(--font-amiri), serif;
-  font-size: calc(var(--u) * 1.3);
+  font-size: calc(var(--u) * 1.7);
   font-weight: 700;
   line-height: 1.5;
   color: var(--ribbon-ink);
@@ -283,29 +283,29 @@ body {
 .ribbon::after { left: 100%; margin-left: calc(var(--u) * 0.5); transform: translateY(-50%) scaleX(-1); }
 
 .panel .ayah {
-  font-size: calc(var(--u) * 1.75);
+  font-size: calc(var(--u) * 3.5);
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.6;
   color: var(--ink);
 }
 .panel .trans {
   font-family: var(--font-poppins), sans-serif;
-  font-size: calc(var(--u) * 0.86);
+  font-size: calc(var(--u) * 1.45);
   font-weight: 300;
-  line-height: 1.35;
+  line-height: 1.45;
   color: var(--ink-soft);
-  max-width: 92%;
+  max-width: 86%;
 }
 .panel .ref {
   font-family: var(--font-cinzel), serif;
-  font-size: calc(var(--u) * 0.8);
+  font-size: calc(var(--u) * 1.15);
   line-height: 1.3;
   letter-spacing: 0.14em;
   color: var(--accent-bright);
 }
 
 /* ============================================================
-   RIBBON STRIPS (center + dawah)
+   CENTRE STRIP — the one small line kept under the verse
    ============================================================ */
 .strip {
   width: 76%;
@@ -335,11 +335,6 @@ body {
   letter-spacing: 0.14em;
   color: var(--ink-soft);
   text-transform: uppercase;
-}
-.strip .en.small {
-  font-size: calc(var(--u) * 0.68);
-  letter-spacing: 0.2em;
-  color: var(--ink-dim);
 }
 
 /* ============================================================
@@ -382,48 +377,6 @@ body {
   letter-spacing: 0.18em;
   color: var(--ink-dim);
   text-transform: uppercase;
-}
-
-/* ============================================================
-   BOTTOM ICONS
-   ============================================================ */
-.icons {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: calc(var(--u) * 3);
-  margin-top: auto;
-  padding-top: calc(var(--v) * 0.5);
-}
-.icon-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--v) * 0.3);
-}
-.icon-item svg {
-  width: calc(var(--u) * 2.5);
-  height: calc(var(--u) * 2.5);
-  stroke: var(--accent-bright);
-  stroke-width: 1.6;
-  fill: none;
-  filter: drop-shadow(0 0 calc(var(--u) * 0.4) var(--border-glow));
-}
-.icon-item .lbl {
-  font-family: var(--font-cinzel), serif;
-  font-size: calc(var(--u) * 0.75);
-  line-height: 1.3;
-  letter-spacing: 0.16em;
-  color: var(--ink-soft);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.icon-sep {
-  width: calc(var(--u) * 0.09);
-  height: calc(var(--u) * 2.4);
-  align-self: center;
-  background: linear-gradient(180deg, transparent, var(--strip-border), transparent);
 }
 
 /* ============================================================
@@ -676,9 +629,6 @@ body {
   .particles span,
   .pattern-wash,
   .panel .corner,
-  .aurora,
-  .sweep,
-  .spotlight,
   .spark,
   .arch-line,
   .mosque-drift,
@@ -692,7 +642,6 @@ body {
   .shooting-star,
   .ribbon,
   .org-rule,
-  .icons .icon-item,
   .lantern::before,
   .stage-border::before,
   .stage-border,
@@ -809,66 +758,6 @@ body {
 @keyframes frameGlow {
   0%, 100% { box-shadow: 0 0 calc(var(--u) * 3) var(--border-glow) inset, 0 0 calc(var(--u) * 2) var(--shadow-strong); }
   50%      { box-shadow: 0 0 calc(var(--u) * 5) var(--border-glow) inset, 0 0 calc(var(--u) * 2) var(--shadow-strong); }
-}
-
-/* ---- a pool of light drifting across the banner (clearly visible,
-        still calm) ---- */
-.aurora {
-  position: absolute;
-  top: -25%;
-  left: -35%;
-  width: 55%;
-  height: 150%;
-  background: radial-gradient(closest-side, var(--aurora) 0%, transparent 74%);
-  filter: blur(calc(var(--u) * 1.6));
-  mix-blend-mode: var(--ray-blend);
-  animation: aurora 19s ease-in-out infinite;
-  will-change: transform;
-}
-@keyframes aurora {
-  0%   { translate: 0 0; scale: 1; }
-  50%  { translate: 200% 3%; scale: 1.14; }
-  100% { translate: 0 0; scale: 1; }
-}
-
-/* ---- a beam of light that crosses the banner ---- */
-.sweep {
-  position: absolute;
-  top: -30%;
-  left: calc(var(--u) * -30);
-  width: calc(var(--u) * 26);
-  height: 165%;
-  background: linear-gradient(90deg, transparent, var(--beam), transparent);
-  filter: blur(calc(var(--u) * 1.6));
-  mix-blend-mode: var(--ray-blend);
-  rotate: 16deg;
-  animation: sweepAcross 15s ease-in-out infinite;
-  will-change: translate;
-}
-@keyframes sweepAcross {
-  0%, 42% { translate: 0 0; }
-  100%    { translate: calc(var(--u) * 150) 0; }
-}
-
-
-/* ---- a soft band of light that walks down the banner ---- */
-.spotlight {
-  position: absolute;
-  left: -10%;
-  top: -28%;
-  width: 120%;
-  height: 26%;
-  background: linear-gradient(180deg, transparent, var(--spot) 46%, transparent);
-  filter: blur(calc(var(--u) * 1.6));
-  mix-blend-mode: var(--ray-blend);
-  animation: spotWalk 34s ease-in-out infinite;
-  will-change: translate, opacity;
-}
-@keyframes spotWalk {
-  0%   { translate: 0 0; opacity: 0; }
-  12%  { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { translate: 0 calc(var(--v) * 140); opacity: 0; }
 }
 
 /* ---- light spilling down from each lantern ---- */
@@ -1116,19 +1005,6 @@ body {
   100%     { background-position: 0 0, 150% 0; }
 }
 
-/* ---- the five virtues lift in sequence, like a slow wave ---- */
-@keyframes iconWave {
-  0%, 62%, 100% { translate: 0 0; opacity: 0.86; }
-  74%           { translate: 0 calc(var(--v) * -0.9); opacity: 1; }
-}
-.icons .icon-item {
-  animation: iconWave 9s ease-in-out infinite;
-}
-.icons .icon-item:nth-of-type(2) { animation-delay: 0.34s; }
-.icons .icon-item:nth-of-type(3) { animation-delay: 0.68s; }
-.icons .icon-item:nth-of-type(4) { animation-delay: 1.02s; }
-.icons .icon-item:nth-of-type(5) { animation-delay: 1.36s; }
-
 /* ---- lantern halos breathe with their flames ---- */
 .lantern::before {
   content: "";
@@ -1219,13 +1095,22 @@ html.is-kiosk .display-ui.is-active {
 
 .theme-ui,
 .lang-ui {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 1vmin;
 }
 
+/* The closed panel is taken OUT OF FLOW. visibility:hidden alone still
+   reserves its width, which shoved every control to its left away from the
+   corner — with two pickers in the cluster the second button ended up
+   stranded mid-screen. Absolute keeps the icons together and lets the panel
+   still animate open (display:none could not). */
 .theme-swatches,
 .lang-opts {
+  position: absolute;
+  right: calc(100% + 1vmin);
+  top: 50%;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 1.1vmin;
@@ -1238,7 +1123,7 @@ html.is-kiosk .display-ui.is-active {
   -webkit-backdrop-filter: blur(1.2vmin);
   opacity: 0;
   visibility: hidden;
-  transform: translateX(1.6vmin);
+  transform: translateY(-50%) translateX(1.6vmin);
   pointer-events: none;
   transition: opacity 240ms ease, transform 240ms ease, visibility 0s linear 240ms;
 }
@@ -1246,7 +1131,7 @@ html.is-kiosk .display-ui.is-active {
 .lang-ui.is-open .lang-opts {
   opacity: 1;
   visibility: visible;
-  transform: translateX(0);
+  transform: translateY(-50%) translateX(0);
   pointer-events: auto;
   transition: opacity 200ms ease, transform 200ms ease, visibility 0s;
 }

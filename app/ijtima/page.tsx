@@ -126,28 +126,10 @@ export default function IjtimaPage() {
             </p>
           </section>
 
-          {/* ---------- Two quote cards ----------
-              The container is RTL, so the FIRST child lands on the right.
-              Reference artwork puts the hadith on the right and the Qur'anic
-              ayah on the left, hence this order. */}
+          {/* ---------- The ayah ----------
+              One verse, set large. At the back of a hall two small cards read
+              as texture; one large one reads as words. */}
           <section className="ij-quotes">
-            {/* Hadith — right */}
-            <article className="ij-quote">
-              <div className="ij-quote-ar">
-                «مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ»
-              </div>
-              <p className="ij-quote-ur">
-                جو شخص علم حاصل کرنے کے لیے کسی راستے پر چلتا ہے، اللہ تعالیٰ اس
-                کے لیے جنت کا راستہ آسان فرما دیتا ہے۔
-              </p>
-              <div className="ij-quote-ref">(صحیح مسلم)</div>
-            </article>
-
-            <span className="ij-quote-divider" aria-hidden="true">
-              <PanelOrnament className="is-mid" />
-            </span>
-
-            {/* Qur'an — left */}
             <article className="ij-quote">
               <div className="ij-quote-ar">﴿وَقُل رَّبِّ زِدْنِي عِلْمًا﴾</div>
               <p className="ij-quote-ur">

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LANGS, DEFAULT_LANG, LANG_STORAGE_KEY, type Lang } from "./lang";
+import { useExclusivePanel } from "../components/useExclusivePanel";
 
 const IDLE_HIDE_MS = 6000;
 
@@ -88,6 +89,9 @@ export default function LanguagePicker() {
   useEffect(() => {
     if (open) keepAwake();
   }, [open, keepAwake]);
+
+  const closePanel = useCallback(() => setOpen(false), []);
+  useExclusivePanel("lang", open, closePanel);
 
   return (
     <div className={`lang-ui${open ? " is-open" : ""}`} onMouseMove={keepAwake}>

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { THEMES, DEFAULT_THEME, STORAGE_KEY } from "../themes";
+import { useExclusivePanel } from "./useExclusivePanel";
 
 const IDLE_HIDE_MS = 6000;
 
@@ -101,6 +102,9 @@ export default function ThemePicker() {
   useEffect(() => {
     if (open) keepAwake();
   }, [open, keepAwake]);
+
+  const closePanel = useCallback(() => setOpen(false), []);
+  useExclusivePanel("theme", open, closePanel);
 
   return (
     <div className={`theme-ui${open ? " is-open" : ""}`} onMouseMove={keepAwake}>

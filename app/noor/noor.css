@@ -41,7 +41,6 @@
   --gl-orb-1: rgba(70, 224, 200, 0.4);
   --gl-orb-2: rgba(125, 107, 255, 0.42);
   --gl-orb-3: rgba(240, 207, 135, 0.3);
-  --gl-beam: rgba(255, 255, 255, 0.075);
   --gl-mesh-line: rgba(255, 255, 255, 0.055);
   --gl-arc-line: rgba(240, 207, 135, 0.24);
   --gl-arc-glow: rgba(240, 207, 135, 0.14);
@@ -215,7 +214,6 @@
   --gl-halo: rgba(190, 150, 60, 0.22);
   --gl-glow: transparent;
   --gl-tsh: rgba(255, 255, 255, 0.7);
-  --gl-beam: rgba(255, 255, 255, 0.35);
   --gl-mesh-line: rgba(94, 76, 42, 0.07);
   --gl-arc-line: rgba(150, 115, 40, 0.3);
   --gl-arc-glow: rgba(150, 115, 40, 0.12);
@@ -344,24 +342,6 @@
   50%      { translate: calc(var(--u) * -22) calc(var(--v) * -16); scale: 1.12; }
 }
 
-/* a wide shaft of light crossing the whole stage, very slowly */
-.gl-beam {
-  position: absolute;
-  top: -40%;
-  left: calc(var(--u) * -40);
-  width: calc(var(--u) * 30);
-  height: 180%;
-  background: linear-gradient(90deg, transparent, var(--gl-beam), transparent);
-  filter: blur(calc(var(--u) * 2));
-  rotate: 14deg;
-  animation: glBeam 26s ease-in-out infinite;
-  will-change: translate;
-}
-@keyframes glBeam {
-  0%, 30% { translate: 0 0; }
-  100%    { translate: calc(var(--u) * 170) 0; }
-}
-
 /* faint technical mesh, the thing that makes a blur read as *glass* */
 .gl-mesh {
   position: absolute;
@@ -448,10 +428,10 @@
   height: 100%;
   display: grid;
   grid-template-columns: 1.06fr 1.06fr 0.9fr;
-  grid-template-rows: minmax(0, 0.82fr) minmax(0, 1.06fr) minmax(0, 0.36fr);
+  grid-template-rows: minmax(0, 0.78fr) minmax(0, 1.1fr) minmax(0, 0.3fr);
   grid-template-areas:
     "hero hero rail"
-    "quran hadith rail"
+    "quran quran rail"
     "bar bar bar";
   gap: calc(var(--v) * 2.2) calc(var(--u) * 1.4);
   padding: calc(var(--v) * 3.2) calc(var(--u) * 3);
@@ -460,7 +440,6 @@
 .gl-hero { grid-area: hero; }
 .gl-rail { grid-area: rail; }
 .gl-quote-quran { grid-area: quran; }
-.gl-quote-hadith { grid-area: hadith; }
 .gl-bar { grid-area: bar; }
 
 /* ============================================================
@@ -584,12 +563,11 @@
   text-shadow: 0 0 calc(var(--u) * 0.8) var(--gl-glow);
 }
 .gl-bismillah-en {
-  font-size: calc(var(--u) * 0.8);
-  font-weight: 500;
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 1.4);
+  font-weight: 600;
   line-height: 1.5;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   color: var(--gold-bright);
 }
 
@@ -619,10 +597,10 @@
    Latin headline is set smaller and in the serif. */
 .gl-hero-en-title {
   font-family: var(--font-cormorant), serif;
-  font-size: calc(var(--u) * 3.3);
-  font-weight: 600;
+  font-size: calc(var(--u) * 3.8);
+  font-weight: 700;
   line-height: 1.24;
-  letter-spacing: 0.015em;
+  letter-spacing: 0.01em;
 }
 
 .gl-hero-strap {
@@ -925,8 +903,8 @@
   gap: calc(var(--u) * 0.9);
 }
 .gl-badge {
-  width: calc(var(--u) * 2.5);
-  height: calc(var(--u) * 2.5);
+  width: calc(var(--u) * 2.9);
+  height: calc(var(--u) * 2.9);
   flex: none;
   display: grid;
   place-items: center;
@@ -937,8 +915,8 @@
     inset 0 0 0 calc(var(--u) * 0.05) var(--gl-fill-line);
 }
 .gl-badge svg {
-  width: calc(var(--u) * 1.4);
-  height: calc(var(--u) * 1.4);
+  width: calc(var(--u) * 1.65);
+  height: calc(var(--u) * 1.65);
   fill: none;
   stroke: var(--gold-bright);
   stroke-width: 1.5;
@@ -950,7 +928,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: calc(var(--v) * 0.15);
-  font-size: calc(var(--u) * 0.72);
+  font-size: calc(var(--u) * 0.86);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: 0.3em;
@@ -958,7 +936,7 @@
 }
 .gl-quote-kicker em {
   font-family: var(--font-cormorant), serif;
-  font-size: calc(var(--u) * 0.86);
+  font-size: calc(var(--u) * 1.02);
   font-style: italic;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -982,18 +960,34 @@
 .gl-quote-ar {
   font-family: var(--font-amiri), serif;
   direction: rtl;
-  font-size: calc(var(--u) * 1.72);
+  /* 2.7 rather than 2.9: at the larger size the verse wrapped with a single
+     word alone on the second line. */
+  font-size: calc(var(--u) * 2.7);
   font-weight: 700;
-  line-height: 1.72;
+  line-height: 1.68;
+  color: var(--ink);
+  text-shadow: 0 calc(var(--v) * 0.3) calc(var(--u) * 0.5) var(--gl-tsh);
+}
+
+/* The English verse sits in the Arabic verse's slot at the Arabic verse's
+   size: the layout keeps its rhythm — one large statement, one quiet gloss
+   beneath — whichever language is showing. */
+.gl-quote-big {
+  max-width: 94%;
+  font-family: var(--font-cormorant), serif;
+  font-size: calc(var(--u) * 2.7);
+  font-weight: 600;
+  line-height: 1.42;
+  letter-spacing: 0.005em;
   color: var(--ink);
   text-shadow: 0 calc(var(--v) * 0.3) calc(var(--u) * 0.5) var(--gl-tsh);
 }
 
 .gl-quote-en {
-  max-width: 94%;
-  font-size: calc(var(--u) * 0.82);
+  max-width: 78%;
+  font-size: calc(var(--u) * 1.24);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.5;
   letter-spacing: 0.035em;
   color: var(--ink-soft);
 }
@@ -1003,7 +997,7 @@
   align-items: center;
   gap: calc(var(--u) * 0.8);
   font-family: var(--font-amiri), serif;
-  font-size: calc(var(--u) * 0.9);
+  font-size: calc(var(--u) * 1.1);
   line-height: 1.4;
   color: var(--gold-bright);
 }
@@ -1019,58 +1013,14 @@
 .gl-bar {
   display: flex;
   align-items: center;
-  gap: calc(var(--u) * 2);
-  padding: calc(var(--v) * 1.4) calc(var(--u) * 2.6);
-}
-
-.gl-bar-quote {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: calc(var(--v) * 0.2);
-}
-.gl-bar-ar {
-  font-family: var(--font-amiri), serif;
-  font-size: calc(var(--u) * 1.34);
-  font-weight: 700;
-  line-height: 1.6;
-  color: var(--gold-bright);
-}
-.gl-bar-en {
-  display: flex;
-  align-items: baseline;
-  gap: calc(var(--u) * 0.8);
-  font-size: calc(var(--u) * 0.72);
-  font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: 0.14em;
-  color: var(--ink-dim);
-  text-transform: uppercase;
-}
-.gl-bar-en em {
-  font-family: var(--font-cormorant), serif;
-  font-size: calc(var(--u) * 0.8);
-  font-style: italic;
-  letter-spacing: 0.04em;
-  text-transform: none;
-  color: var(--ink-soft);
-}
-
-.gl-bar-sep {
-  width: calc(var(--u) * 0.07);
-  height: 68%;
-  flex: none;
-  background: linear-gradient(180deg, transparent, var(--gl-hair), transparent);
+  justify-content: center;
+  padding: calc(var(--v) * 1.2) calc(var(--u) * 2.6);
 }
 
 .gl-chips {
-  flex: none;
   display: flex;
   align-items: stretch;
-  gap: calc(var(--u) * 0.8);
+  gap: calc(var(--u) * 1.6);
 }
 .gl-chip {
   display: flex;
@@ -1086,14 +1036,14 @@
     inset 0 0 0 calc(var(--u) * 0.045) var(--gl-fill-line);
 }
 .gl-chip svg {
-  width: calc(var(--u) * 1.9);
-  height: calc(var(--u) * 1.9);
+  width: calc(var(--u) * 2.1);
+  height: calc(var(--u) * 2.1);
   fill: none;
   stroke: var(--gold-bright);
   stroke-width: 1.5;
 }
 .gl-chip span {
-  font-size: calc(var(--u) * 0.58);
+  font-size: calc(var(--u) * 0.66);
   font-weight: 500;
   line-height: 1.2;
   letter-spacing: 0.16em;
@@ -1124,37 +1074,13 @@
 
 /* In English the translation stops being a footnote and becomes the quote
    itself: display size, in the serif, at full ink. */
-[data-lang="en"] .gl-quote-en {
-  max-width: 96%;
-  font-family: var(--font-cormorant), serif;
-  font-size: calc(var(--u) * 1.42);
-  font-weight: 500;
-  line-height: 1.44;
-  letter-spacing: 0.01em;
-  color: var(--ink);
+/* With the Arabic hidden, the greeting line is the only thing left on that
+   row, so it comes up a size. */
+[data-lang="en"] .gl-hero-salam-en {
+  font-size: calc(var(--u) * 0.95);
 }
-
-/* Same promotion for the line in the footer bar. */
-[data-lang="en"] .gl-bar-en {
-  font-family: var(--font-cormorant), serif;
-  font-size: calc(var(--u) * 1.15);
-  font-weight: 500;
-  line-height: 1.35;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  color: var(--ink);
-}
-[data-lang="en"] .gl-bar-en em {
-  font-size: calc(var(--u) * 0.82);
-  color: var(--gold-bright);
-}
-
-/* The strapline carries the greeting in English mode, which is a much longer
-   string than the Arabic mode's title — it needs the smaller setting. */
-[data-lang="en"] .gl-hero-strap {
-  font-size: calc(var(--u) * 1.02);
-  letter-spacing: 0.24em;
-  text-indent: 0.24em;
+[data-lang="en"] .gl-quote-body {
+  gap: calc(var(--v) * 1.2);
 }
 
 /* ============================================================
@@ -1176,8 +1102,7 @@
 .gl-hero { animation-delay: 140ms; }
 .gl-rail { animation-delay: 300ms; }
 .gl-quote-quran { animation-delay: 460ms; }
-.gl-quote-hadith { animation-delay: 600ms; }
-.gl-bar { animation-delay: 740ms; }
+.gl-bar { animation-delay: 600ms; }
 
 @keyframes glEdgeIn {
   from { opacity: 0; scale: 1.01; }
@@ -1186,34 +1111,6 @@
 .gl-edge {
   animation: glEdgeIn 1400ms cubic-bezier(0.22, 0.72, 0.28, 1) both;
 }
-
-/* a specular streak crossing each pane, staggered so the wall never has two
-   panes catching the light at once */
-.gl-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  background: linear-gradient(
-    104deg,
-    transparent 40%,
-    var(--gl-streak) 50%,
-    transparent 60%
-  );
-  background-size: 240% 100%;
-  background-repeat: no-repeat;
-  pointer-events: none;
-  animation: glStreak 14s ease-in-out infinite;
-}
-@keyframes glStreak {
-  0%, 68% { background-position: -70% 0; }
-  100%    { background-position: 170% 0; }
-}
-.gl-rail::after { animation-delay: -2.8s; }
-.gl-quote-quran::after { animation-delay: -5.6s; }
-.gl-quote-hadith::after { animation-delay: -8.4s; }
-.gl-bar::after { animation-delay: -11.2s; }
 
 /* the gold sheen travelling through the hero headline */
 .gl-hero-display {
@@ -1237,16 +1134,13 @@
 }
 .gl-rail .gl-sheen { animation-delay: -3.2s; }
 .gl-quote-quran .gl-sheen { animation-delay: -6.4s; }
-.gl-quote-hadith .gl-sheen { animation-delay: -9.6s; }
 .gl-bar .gl-sheen { animation-delay: -12.8s; }
 
 @media (prefers-reduced-motion: reduce) {
   .gl-orb,
-  .gl-beam,
   .gl-mesh,
   .gl-arc,
   .gl-card,
-  .gl-card::after,
   .gl-sheen,
   .gl-hero-display,
   .gl-crest-halo,
